@@ -1,0 +1,3 @@
+metis
+networkx==2.3
+pygraphviz
