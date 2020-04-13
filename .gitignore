@@ -1,4 +1,5 @@
-students.csv
+*.csv
 graph.dot
 graph.png
 .DS_STORE
+__pycache__

@@ -1,3 +1,5 @@
-metis
+Flask==1.1.2
+gunicorn==20.0.4
+metis==0.2a4
 networkx==2.3
-pydot
+pydot==1.4.1
