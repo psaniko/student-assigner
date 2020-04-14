@@ -2,6 +2,7 @@ import csv
 import io
 from base64 import b64decode
 
+import networkx as nx
 from flask import Flask, request, jsonify
 
 from solver import build_graph
@@ -43,7 +44,8 @@ def create_dot_file():
 
     return jsonify({
         'cost': cost,
-        'dot': G.string(),
+        # 'dot': G.string(),
+        'dot': str(nx.nx_pydot.to_pydot(G)),
     })
 
 

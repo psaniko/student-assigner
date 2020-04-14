@@ -163,11 +163,11 @@ def build_graph(
             G.remove_edge(edge_from, edge_to)
 
     # convert to pygraphviz graph
-    A = nx.drawing.nx_agraph.to_agraph(G)
-    # A.graph_attr.update(overlap='scale', splines=True)
-    for color in colors:
-        group_nodes = [n for n, d in G.node.items() if d.get('color') == color]
-        A.add_subgraph(group_nodes, name='cluster' + color, color=color, rank='same')
+    # A = nx.drawing.nx_agraph.to_agraph(G)
+    # for color in colors:
+    #     group_nodes = [n for n, d in G.node.items() if d.get('color') == color]
+    #     A.add_subgraph(group_nodes, name='cluster' + color, color=color, rank='same')
+    A = G
 
     return total_volume, A
 
@@ -224,8 +224,9 @@ if __name__ == '__main__':
         print('Failed: ', e)
         sys.exit()
 
-    G.write('graph.dot')
-    G.layout('dot')
-    G.draw('graph.png')
+    # G.write('graph.dot')
+    # G.layout('dot')
+    # G.draw('graph.png')
+    nx.nx_pydot.write_dot(G, 'graph.dot')
 
     print('Cost: ', cost)
