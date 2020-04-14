@@ -11,16 +11,7 @@ def build_graph_from_file(filename='students.csv', *args, **kwargs):
     with open(filename) as csvfile:
         reader = csv.DictReader(csvfile, delimiter=';')
         students = list(reader)  # force list to allow pickle
-        return build_graph_async(students, *args, **kwargs)
-
-
-def build_graph_async(*args, **kwargs):
-    # METIS will segmentation fault if it fails to divide the graph, so we
-    # call it async to catch it properly
-    try:
-        return Pool().apply_async(build_graph, args=args, kwds=kwargs).get(timeout=3)
-    except TimeoutError as e:
-        raise ValueError('METIS failed to partition graph. Try fewer edges or partitions.') from e
+        return build_graph(students, *args, **kwargs)
 
 
 def build_graph(
@@ -139,27 +130,46 @@ def build_graph(
             else:
                 print('Unhandled preference: ' + item)
 
-    # partition graph
-    (total_volume, parts) = metis.part_graph(
-        graph=G,
-        nparts=num_partitions,
-        tpwgts=[
-            tuple(
-                1 / num_partitions
-                for i in range(0, len(node_weights_to_ubvec))
-            )
-            for i in range(0, num_partitions)
-        ],
-        ubvec=list(node_weights_to_ubvec.values()),
-        objtype='cut',
-    )
+    # partition graph in async process because METIS will sometimes throw
+    # a segmentation fault which we want to raise properly
+    try:
+        promise = Pool().apply_async(metis.part_graph, args=(), kwds={
+            'graph': G,
+            'nparts': num_partitions,
+            'tpwgts': [
+                tuple(
+                    1 / num_partitions
+                    for i in range(0, len(node_weights_to_ubvec))
+                )
+                for i in range(0, num_partitions)
+            ],
+            'ubvec': list(node_weights_to_ubvec.values()),
+            'objtype': 'cut',
+        })
+        (total_volume, parts) = promise.get(timeout=3)
+    except TimeoutError as e:
+        raise ValueError('METIS failed to partition graph. Try fewer edges or partitions.') from e
 
-    # colors = ['red', 'blue', 'green']
+    # assign colors according to assigned partition
     colors = get_color_list(num_partitions)
     for i, p in enumerate(parts):
         G.node[i]['color'] = colors[p]
 
-    return total_volume, G
+    # remove low-weight edges to improve visualization
+    edges = [e for e in G.edges.data()]
+    for edge_obj in edges:
+        edge_from, edge_to, edge_data = edge_obj
+        if abs(edge_data['weight']) < 30:
+            G.remove_edge(edge_from, edge_to)
+
+    # convert to pygraphviz graph
+    A = nx.drawing.nx_agraph.to_agraph(G)
+    # A.graph_attr.update(overlap='scale', splines=True)
+    for color in colors:
+        group_nodes = [n for n, d in G.node.items() if d.get('color') == color]
+        A.add_subgraph(group_nodes, name='cluster' + color, color=color, rank='same')
+
+    return total_volume, A
 
 
 # helper function to add visuals to edges
@@ -214,5 +224,8 @@ if __name__ == '__main__':
         print('Failed: ', e)
         sys.exit()
 
-    nx.nx_pydot.write_dot(G, 'graph.dot')
+    G.write('graph.dot')
+    G.layout('dot')
+    G.draw('graph.png')
+
     print('Cost: ', cost)

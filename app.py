@@ -2,10 +2,9 @@ import csv
 import io
 from base64 import b64decode
 
-import networkx as nx
 from flask import Flask, request, jsonify
 
-from solver import build_graph_async
+from solver import build_graph
 
 
 app = Flask(__name__, static_url_path='/static')
@@ -28,7 +27,7 @@ def create_dot_file():
     students = list(csv.DictReader(io.StringIO(csv_decoded), delimiter=';'))
 
     try:
-        cost, G = build_graph_async(
+        cost, G = build_graph(
             students=students,
             num_partitions=num_partitions,
             friendship_weight=request.json.get('friendship_weight', 30),
@@ -44,7 +43,7 @@ def create_dot_file():
 
     return jsonify({
         'cost': cost,
-        'dot': str(nx.nx_pydot.to_pydot(G)),
+        'dot': G.string(),
     })
 
 
