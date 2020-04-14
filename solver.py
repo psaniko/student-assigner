@@ -1,5 +1,7 @@
 import random
 import csv
+import sys
+from multiprocessing import Pool, TimeoutError
 
 import networkx as nx
 import metis
@@ -8,7 +10,17 @@ import metis
 def build_graph_from_file(filename='students.csv', *args, **kwargs):
     with open(filename) as csvfile:
         reader = csv.DictReader(csvfile, delimiter=';')
-        return build_graph(reader, *args, **kwargs)
+        students = list(reader)  # force list to allow pickle
+        return build_graph_async(students, *args, **kwargs)
+
+
+def build_graph_async(*args, **kwargs):
+    # METIS will segmentation fault if it fails to divide the graph, so we
+    # call it async to catch it properly
+    try:
+        return Pool().apply_async(build_graph, args=args, kwds=kwargs).get(timeout=3)
+    except TimeoutError as e:
+        raise ValueError('METIS failed to partition graph. Try fewer edges or partitions.') from e
 
 
 def build_graph(
@@ -37,7 +49,6 @@ def build_graph(
         gender = row['Gender']
         gender = row.get('Gender')
 
-        # gender_icon = '♂' if gender is 'm' else '♀'
         G.add_node(
             i,
             label=name + "\n" + origin_class,
@@ -46,8 +57,7 @@ def build_graph(
             preferences=row['Preferences'],
 
             # styling
-            fillcolor='#E0E0E0' if gender == 'm' else '#FFFFFF',
-            style='filled',
+            shape='hexagon' if gender == 'm' else 'ellipse',
             penwidth=3,
 
             # node attributes
@@ -181,8 +191,8 @@ def get_color_list(n):
     return colors[:n]
 
 
-if __name__ == '__main__':
-    cost, G = build_graph_from_file(
+def build_sample():
+    return build_graph_from_file(
         filename='students.csv',
         num_partitions=3,
         friendship_weight=30,
@@ -195,6 +205,14 @@ if __name__ == '__main__':
             'recommendation_int': 1.20,
         },
     )
+
+
+if __name__ == '__main__':
+    try:
+        cost, G = build_sample()
+    except ValueError as e:
+        print('Failed: ', e)
+        sys.exit()
 
     nx.nx_pydot.write_dot(G, 'graph.dot')
     print('Cost: ', cost)

@@ -4,9 +4,8 @@ from base64 import b64decode
 
 import networkx as nx
 from flask import Flask, request, jsonify
-from werkzeug.exceptions import BadRequest
 
-from solver import build_graph
+from solver import build_graph_async
 
 
 app = Flask(__name__, static_url_path='/static')
@@ -21,29 +20,41 @@ def index():
 def create_dot_file():
     try:
         num_partitions = request.json['num_partitions']
-    except KeyError as e:
-        raise BadRequest('Missing parameter "num_partitions"') from e
+    except KeyError:
+        return json_error(400, 'Missing parameter num_partitions')
 
     csv_encoded = request.json.get('csv_encoded')
     csv_decoded = b64decode(csv_encoded).decode('utf-8')
-    students = csv.DictReader(io.StringIO(csv_decoded), delimiter=';')
+    students = list(csv.DictReader(io.StringIO(csv_decoded), delimiter=';'))
 
-    cost, G = build_graph(
-        students=students,
-        num_partitions=num_partitions,
-        friendship_weight=request.json.get('friendship_weight', 30),
-        classmate_weight=request.json.get('classmate_weight', 3),
-        schoolmate_weight=request.json.get('schoolmate_weight', 1),
-        teacher_multiplier=request.json.get('teacher_multiplier', 100),
-        node_weights_to_ubvec=request.json.get('node_weights_to_ubvec', {
-            'total': 1.05,
-        }),
-    )
+    try:
+        cost, G = build_graph_async(
+            students=students,
+            num_partitions=num_partitions,
+            friendship_weight=request.json.get('friendship_weight', 30),
+            classmate_weight=request.json.get('classmate_weight', 3),
+            schoolmate_weight=request.json.get('schoolmate_weight', 1),
+            teacher_multiplier=request.json.get('teacher_multiplier', 100),
+            node_weights_to_ubvec=request.json.get('node_weights_to_ubvec', {
+                'total': 1.05,
+            }),
+        )
+    except ValueError as e:
+        return json_error(400, str(e))
 
     return jsonify({
         'cost': cost,
         'dot': str(nx.nx_pydot.to_pydot(G)),
     })
+
+
+def json_error(status_code, message):
+    response = jsonify({
+        'status': status_code,
+        'message': message,
+    })
+    response.status_code = status_code
+    return response
 
 
 @app.after_request
