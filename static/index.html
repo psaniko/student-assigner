@@ -350,12 +350,8 @@
 
         function deleteCustomNode(e){
             var container = document.getElementById("customNodeContainer");
-            var deleteParent = document.getElementById(e.target.parentNode.id)
-
-            console.log(e)
-            console.log(parent)
-                    
-            container.removeChild(deleteParent);
+                  
+            container.removeChild(e.target.parentNode);
 
             --customToleranceNodeCount;
         }
