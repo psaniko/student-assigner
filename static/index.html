@@ -62,10 +62,7 @@
         .nav-horizontal ul {
             list-style-type: none;
             margin: 3px;
-            float: right;
-        }
-
-        .right ul {
+            float: right;         
             display: block;
             overflow: hidden;
         }
@@ -78,15 +75,9 @@
             padding-right: 10px;
         }
 
-        /* .dataStatListContainer ul {
-            display: inline;
-            list-style-type: none;
-            display: block;
-        } */
-
         #tutorialButton {
             font-family: Verdana;
-            height: fit-content;
+            height: 20px;
             width: max-content;
             background-color: #4CAF50; /* Green */
             border: none;
@@ -94,8 +85,10 @@
             text-align: center;
             text-decoration: none;
             display: inline-block;
-            font-size: 18px;
-            border-radius: 6px;
+            font-size: 16px;
+            border-radius: 4px;
+            padding-top: 0;
+            padding-bottom: 0;
         }
 
         /* End of Horizontal Navbar */
@@ -355,8 +348,8 @@
                     var classmate_weight = parseInt(document.getElementById("edgeWeightClassInput").value);
                     var schoolmate_weight = parseInt(document.getElementById("edgeWeightSchoolInput").value);
                     var teacher_multiplier = parseInt(document.getElementById("teacherMultiInput").value);
-                    var classSize_imbalance = parseInt(document.getElementById("classImbaInput").value);
-                    var gender_imbalance = parseInt(document.getElementById("genderImbaInput").value);
+                    var classSize_imbalance = (parseInt(document.getElementById("classImbaInput").value) / 100 +1);
+                    var gender_imbalance = (parseInt(document.getElementById("genderImbaInput").value) / 100 +1);
     
                     let dataToBeSent = {
                         num_partitions: num_partitions,
@@ -462,6 +455,11 @@
 			toggle loader
 		</button>
     </li> -->
+
+    <li><label class="settingTitle">Cost:</label></li>
+    <li><label id="costStatLabel"></label></li>
+	<li><label class="settingTitle">Dataset size:</label></li>
+	<li><label id="datasetSizeStatLabel"></label></li>
     
     <li class="settingTitle">Graph layout:</li>
     
@@ -481,13 +479,6 @@
 			Tutorial
 		</button>
     </li>	
-  </ul>
-  
-  <ul class="right">
-	<li><label class="settingTitle">Cost:</label></li>
-	<li><label id="costStatLabel"></label></li>
-	<li><label class="settingTitle">Dataset size:</label></li>
-	<li><label id="datasetSizeStatLabel"></label></li>
   </ul>
 </div>
 
@@ -521,10 +512,10 @@
 		<div class="settingItem settingTextItem">
 			<label class="settingTitle">Set node weight imbalance tolerance %</label>
 			<br>
-			<input type="number" id="classImbaInput" step="0.01" value="1.13" required>
+			<input type="number" id="classImbaInput" value="10" step="0.1" required>
 			<label for="classImbaInput">Class size</label>
 			<br>
-			<input type="number" id="genderImbaInput" value="1.2" required>
+			<input type="number" id="genderImbaInput" value="20" step="0.1" required>
 			<label for="genderImbaInput">Gender</label>
 			<br>
 			<div>
