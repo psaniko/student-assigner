@@ -75,6 +75,16 @@
             padding-right: 10px;
         }
 
+        #costStatLabel {
+            border-right: dotted #4CAF50;
+            padding-right: 10px;
+        }
+
+        #datasetSizeStatLabel {
+            border-right: dotted #4CAF50;
+            padding-right: 10px;
+        }
+
         #tutorialButton {
             font-family: Verdana;
             height: 20px;
@@ -133,6 +143,7 @@
             padding: 10px;
             font-size: 17px;
             font-family: Verdana;
+            border-bottom: dotted #4CAF50;
         }
 
         .settingItem input {
@@ -165,7 +176,7 @@
         }
 
         #webpageHeader {
-            font-size: 22px;
+            font-size: 23px;
             padding: 10px;
             font-family: Verdana;
             display: flex;
@@ -203,21 +214,30 @@
             text-align: center;
             text-decoration: none;
             display: inline-block;
-            font-size: 14px;
+            font-size: 15px;
             border-radius: 6px;
         }
 
         #customNodeContainer {
-            margin-bottom: 0;
+            margin-bottom: 20px;
             margin-top: 0;
             padding-top: 0;
             padding-bottom: 0;
+        }
+
+        #nodeContainer {
+            border-bottom: none;
         }
 
         .centerClass {
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+
+        #renderButtonContainer {
+            padding-top: 3px;
+            border-bottom: none;
         }
 
         #renderGraphButton {
@@ -230,7 +250,7 @@
             text-align: center;
             text-decoration: none;
             display: inline-block;
-            font-size: 19px;
+            font-size: 22px;
             border-radius: 6px;
         }
 
@@ -595,51 +615,49 @@
 	<form class="settingsForm" onsubmit="onFormSubmit(); return false">
 		<div class="settingTitle">
 			<label id=webpageHeader>Student Assigner</label>
-		</div>
-
-		<div class="settingItem settingTextItem">
-			<input type="number" id="partitionNumInput" placeholder="3"  required>
-			<label class="settingTitle" for="partitionNumInput">Classes</label>
-		</div>
-
-		<div class="settingItem settingTextItem">
-			<label class="settingTitle">Preference weights</label>
-			<br>
-			<input type="number" id="edgeWeightFriendInput" value="30" required>
-			<label for="edgeWeightFriendInput">Friend wish</label>
-			<br>
-			<input type="number" id="edgeWeightClassInput" value="3" required>
-			<label for="edgeWeightClassInput">Same origin class</label>
-			<br>
-			<input type="number" id="edgeWeightSchoolInput" value="1"required>
-			<label for="edgeWeightSchoolInput">Same origin school</label>
-			<br>
-			<input type="number" id="teacherMultiInput" value="100" required>
-			<label for="teacherMultiInput">Teacher multiplier</label>
-		</div>
-
-		<div class="settingItem settingTextItem" id="nodeContainer">
-			<label class="settingTitle">Deviation tolerance %</label>
-			<br>
-			<input type="number" id="classImbaInput" value="10" step="0.1" required>
-			<label for="classImbaInput">Equal class size</label>
-			<br>
-			<input type="number" id="genderImbaInput" value="20" step="0.1" required>
-            <label for="genderImbaInput">Equal male/female</label>
         </div>
-        <div class="settingItem settingTextItem" id="customNodeContainer">
-            <button type="button" id="addCustomNodeButton" onclick="addCustomNodeTolerance()">Add custom (max. 5)</button>
-        </div>
-	
-		<div class="settingItem">
+        <br>
+        <div class="settingItem">
 			<label class="settingTitle">Upload CSV file</label>
 			<br>
 			<div id="fileChooserButtonContainer">
 		  		<input id="fileChooserButton" type="file" accept=".csv" required>
 			</div>
+        </div>
+        <div class="settingItem settingTextItem">
+            <label class="settingTitle">Basic</label>
+            <br>
+			<input type="number" id="partitionNumInput" placeholder="3"  required>
+			<label for="partitionNumInput">Classes</label>
 		</div>
-
-		<div class="settingItem">
+		<div class="settingItem settingTextItem">
+			<label class="settingTitle">Preference weights</label>
+			<br>
+			<input type="number" id="edgeWeightFriendInput" value="30" required>
+			<label for="edgeWeightFriendInput">A person</label>
+			<br>
+			<input type="number" id="edgeWeightClassInput" value="3" required>
+			<label for="edgeWeightClassInput">A class</label>
+			<br>
+			<input type="number" id="edgeWeightSchoolInput" value="1"required>
+			<label for="edgeWeightSchoolInput">A school</label>
+			<br>
+			<input type="number" id="teacherMultiInput" value="100" required>
+			<label for="teacherMultiInput">Teacher multiplier</label>
+		</div>
+		<div class="settingItem settingTextItem" id="nodeContainer">
+			<label class="settingTitle">Max. difference in %</label>
+			<br>
+			<input type="number" id="classImbaInput" value="10" step="0.1" required>
+			<label for="classImbaInput">Class size</label>
+			<br>
+			<input type="number" id="genderImbaInput" value="20" step="0.1" required>
+            <label for="genderImbaInput">Male / Female</label>
+        </div>
+        <div class="settingItem settingTextItem" id="customNodeContainer">
+            <button type="button" id="addCustomNodeButton" onclick="addCustomNodeTolerance()">Add custom</button>
+        </div>
+		<div class="settingItem" id="renderButtonContainer">
 			<input id="renderGraphButton" type="submit" value="Render Graph"></button>
 		</div>
 	</form>
@@ -723,7 +741,9 @@
 		</p>
 		
 		<h5>Anything wrong? Send us a message and we'll see if we can sort it out. Find our contact data on the upper right</h5>
-		</div>
+	</div>
 </div>
+
 </body>
+
 </html>
