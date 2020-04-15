@@ -5,12 +5,14 @@
 
 <head>
     <title>Student Assigner</title>
-    <style>
+    <style type="text/css">
         body{
+            margin: 0;
             font-family: Verdana;
         }
 
-        .tutorialContainer{
+        /* Tutorial Popup Section */
+        .tutorialContainer {
             display: none;
             border: 8px solid #222;
             background-color: rgb(248, 244, 244);
@@ -34,7 +36,7 @@
             right: 6%;
         }
 
-        .tutorialText{
+        .tutorialText {
             color: #333;
             margin-left: 5px;
             font-size: 15px;
@@ -42,33 +44,33 @@
         }
 
         /* END OF TUTORIAL SECTION */
+        
         /* START OF HORIZONTAL NAV */
 
         .nav-horizontal {
-            height: 4vh;
-            min-height: 35px;
             width: calc(100% - 250px);
             background-color: #333;
             color: #4CAF50;
-            font-family: sans-serif;
+            font-family: Verdana;
             font-size: 15px;
             float: right;
             overflow: auto;
+            padding-top: 5px;
+            padding-bottom: 5px;
         }
 
-        .nav-horizontal ul{
+        .nav-horizontal ul {
             list-style-type: none;
             margin: 3px;
-            padding: 5px;
             float: right;
         }
 
-        .right ul{
+        .right ul {
             display: block;
             overflow: hidden;
         }
 
-        .right li{
+        .right li {
             display: inline-block;
             text-align: center;
             text-decoration: none;
@@ -76,19 +78,36 @@
             padding-right: 10px;
         }
 
-        .dataStatListContainer ul {
+        /* .dataStatListContainer ul {
             display: inline;
             list-style-type: none;
+            display: block;
+        } */
+
+        #tutorialButton {
+            font-family: Verdana;
+            height: fit-content;
+            width: max-content;
+            background-color: #4CAF50; /* Green */
+            border: none;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 18px;
+            border-radius: 6px;
         }
 
         /* End of Horizontal Navbar */
 
-        .nav-vertical form{
+        /* Start of Vertical Navbar */
+
+        .nav-vertical form {
             list-style-type: none;
             margin: 0;
             padding: 0;
             width: 250px;
-            height: 97.5vh;
+            height: 100vh;
             background-color: #333;
             overflow: auto;
             float:left;
@@ -96,7 +115,7 @@
             text-align: left;
         }
 
-        .settingItem:hover{
+        .settingItem:hover {
             background-color: #222;
         }
 
@@ -106,25 +125,25 @@
             font-family: Verdana;
         }
 
-        .settingItem input{
+        .settingItem input {
             height: 25px;
             margin-top: 8px;
             margin-bottom: 4px;
         }
 
-        .settingTextItem input{
+        .settingTextItem input {
             width: 50px;
             font-size: 15px;
             color: #333;
         }
 
-        .settingItem button{
+        .settingItem button {
             text-align: center;
             margin-top: 10px;
             margin-bottom: 10px;
         }
 
-        .settingItem select{
+        .settingItem select {
             margin-top: 10px;
             margin-bottom: 10px;
         }
@@ -135,7 +154,7 @@
             color: #4CAF50;
         }
 
-        #webpageHeader{
+        #webpageHeader {
             font-size: 22px;
             padding: 10px;
             font-family: Verdana;
@@ -143,28 +162,28 @@
             align-items: center;
         }
 
-        #settingsHeader{
+        #settingsHeader {
             font-size: 22px;
             padding: 10px;
         }
 
-        .uploadDialog input{
+        .uploadDialog input {
             padding: 10px;
             height: 20px;
         }
 
-        #fileChooserButtonContainer{
+        #fileChooserButtonContainer {
             width: 240px;
         }
 
-        #fileChooserButton{
+        #fileChooserButton {
             width: 240px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
-        #addCustomButton{
+        #addCustomButton {
             width: 200px;
             height: 30px;
             background-color: #4CAF50; /* Green */
@@ -178,13 +197,13 @@
             border-radius: 6px;
         }
 
-        .centerClass{
+        .centerClass {
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        #renderGraphButton{
+        #renderGraphButton {
             width: 200px;
             height: 45px;
             background-color: #4CAF50; /* Green */
@@ -209,7 +228,6 @@
         }
 
         div#graphDiv{
-            border: 1px solid red;
             overflow: hidden;
         }
 
@@ -233,10 +251,10 @@
         }
     </style>
 
-    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://d3js.org/d3.v5.min.js" type="application/javascript"></script>
     <script src="https://unpkg.com/@hpcc-js/wasm@0.3.11/dist/index.min.js" type="application/javascript"></script>
-    <script src="https://unpkg.com/d3-graphviz@3.0.0/build/d3-graphviz.js"></script>
-    <script>
+    <script src="https://unpkg.com/d3-graphviz@3.0.0/build/d3-graphviz.js" type="application/javascript"></script>
+    <script type="application/javascript">
 
         var graph
         var currentGraphData
@@ -314,13 +332,11 @@
         }
     
         // Takes file input file and puts out plain text to console.
-        function onFormSubmit (e, Apfelkuchen) {
+        function onFormSubmit (e) {
             var reader = new FileReader();
             var fileInput = document.getElementById('fileChooserButton').files[0];
             var layoutOptionBox = document.getElementById("graphLayoutOpt")
             var currentLayout = layoutOptionBox.options[layoutOptionBox.selectedIndex].value
-    
-            console.log(e, Apfelkuchen);
     
             document.getElementById("loader").style.display = "block";
     
@@ -388,6 +404,7 @@
                 rerenderGraph(chosenLayout, currentGraphData.dot)
                 console.log(`Layout changed to ${chosenLayout}. Graph rebuilt with current data`)
             } else {
+                //TODO replace with flashmessage
                 alert("Error. No graph data available.")
             }
         }
@@ -435,21 +452,19 @@
     </script>
 </head>
 
-<body class="mainBody">
+<body>
 
 <div class="nav-horizontal">
-  <ul id="nav-ul-hori" class="right">
-	<li>
-		<button onclick="toggleTutorial()">
-			toggle tutorial
-		</button>
-	</li>
-  	<li>
+  <ul id="navHorizontalUl" class="right">
+    
+  	<!-- <li>
 		<button onclick="toggleLoader()">
 			toggle loader
 		</button>
-	</li>
-	<li class="settingTitle">Graph layout:</li>
+    </li> -->
+    
+    <li class="settingTitle">Graph layout:</li>
+    
 	<li>	
   		<select id="graphLayoutOpt" onchange="layoutOnChange()">
           <option value="dot" selected="">dot</option>
@@ -460,7 +475,12 @@
 		  <option value="osage">osage</option>
 		  <option value="twopi">twopi</option>
 		</select>
-	</li> 	
+    </li> 
+    <li>
+		<button id="tutorialButton" onclick="toggleTutorial()">
+			Tutorial
+		</button>
+    </li>	
   </ul>
   
   <ul class="right">
