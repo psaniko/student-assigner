@@ -170,10 +170,12 @@ def build_graph(
 
     # create subgraphs to cluster students in same class together
     for color in colors:
-        subgraph = pydot.Cluster(color, nodesep=7, ranksep=4)
+        subgraph = pydot.Cluster(color, label='test 1', nodesep=7, ranksep=4)
         for node in P.get_node_list():
             if node.get_attributes()['color'] == color:
                 subgraph.add_node(node)
+        num_students = len(subgraph.get_node_list())
+        subgraph.set_label(str(num_students) + ' students')
         P.add_subgraph(subgraph)
 
     return total_volume, P
