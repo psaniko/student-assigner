@@ -5,6 +5,7 @@ from multiprocessing import Pool, TimeoutError
 
 import networkx as nx
 import metis
+import pydot
 
 
 def build_graph_from_file(filename='students.csv', *args, **kwargs):
@@ -155,21 +156,25 @@ def build_graph(
     for i, p in enumerate(parts):
         G.node[i]['color'] = colors[p]
 
-    # remove low-weight edges to improve visualization
+    # remove low-weight and negative edges to improve visualization
     edges = [e for e in G.edges.data()]
     for edge_obj in edges:
         edge_from, edge_to, edge_data = edge_obj
-        if abs(edge_data['weight']) < 30:
+        if edge_data['weight'] < 30:
             G.remove_edge(edge_from, edge_to)
 
-    # convert to pygraphviz graph
-    # A = nx.drawing.nx_agraph.to_agraph(G)
-    # for color in colors:
-    #     group_nodes = [n for n, d in G.node.items() if d.get('color') == color]
-    #     A.add_subgraph(group_nodes, name='cluster' + color, color=color, rank='same')
-    A = G
+    # convert to pydot
+    P = nx.drawing.nx_pydot.to_pydot(G)
 
-    return total_volume, A
+    # create subgraphs to cluster students in same class together
+    for color in colors:
+        subgraph = pydot.Cluster(color, nodesep=7, ranksep=4)
+        for node in P.get_node_list():
+            if node.get_attributes()['color'] == color:
+                subgraph.add_node(node)
+        P.add_subgraph(subgraph)
+
+    return total_volume, P
 
 
 # helper function to add visuals to edges
@@ -210,9 +215,9 @@ def build_sample():
         schoolmate_weight=1,
         teacher_multiplier=100,
         node_weights_to_ubvec={
-            'total': 1.03,
+            'total': 1.05,
             'gender': 1.20,
-            'recommendation_int': 1.20,
+            'recommendation_int': 1.40,
         },
     )
 
@@ -224,9 +229,6 @@ if __name__ == '__main__':
         print('Failed: ', e)
         sys.exit()
 
-    # G.write('graph.dot')
-    # G.layout('dot')
-    # G.draw('graph.png')
-    nx.nx_pydot.write_dot(G, 'graph.dot')
+    G.write('graph.dot')
 
     print('Cost: ', cost)
