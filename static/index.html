@@ -53,6 +53,7 @@
             font-family: sans-serif;
             font-size: 15px;
             float: right;
+            overflow: auto;
         }
 
         .nav-horizontal ul{
@@ -207,10 +208,10 @@
             overflow: hidden;
         }
 
-        /* div#graphDiv{
+        div#graphDiv{
             border: 1px solid red;
             overflow: hidden;
-        } */
+        }
 
         #loader {
             display: none;
@@ -236,15 +237,22 @@
     <script src="https://unpkg.com/@hpcc-js/wasm@0.3.11/dist/index.min.js" type="application/javascript"></script>
     <script src="https://unpkg.com/d3-graphviz@3.0.0/build/d3-graphviz.js"></script>
     <script>
+
+        var graph
+        var currentGraphData
+        var layoutOptionBox
+        var currentLayout
+
         // prevents empty graph window during develepment, might not be needed later
         window.onload = function() {
-            initiateGraph("dot")
+            currentGraphData = 0;
+            graph = d3.select("#graphDiv");
+            layoutOptionBox = document.getElementById("graphLayoutOpt");
+            currentLayout = layoutOptionBox.options[layoutOptionBox.selectedIndex].value;
+            initiateGraph(currentLayout, )
+            // Global variables storing the current graph data and the graphviz itself
         }
-    
-        // Global variables storing the current graph data and the graphviz itself
-        var currentGraphData = 0
-        var graph = d3.select("#graphDiv"); 
-    
+            
         // Function to test looks and functionality of loader. dev purpose only
         function toggleLoader(){
             if (document.getElementById("loader").style.display == "none"){
@@ -444,7 +452,8 @@
 	<li class="settingTitle">Graph layout:</li>
 	<li>	
   		<select id="graphLayoutOpt" onchange="layoutOnChange()">
-		  <option value="dot" selected="">dot</option><option value="patchwork">Patchwork</option>		  
+          <option value="dot" selected="">dot</option>
+          <option value="patchwork">Patchwork</option>		  
 		  <option value="circo">circo</option>
 		  <option value="fdp">fdp</option>
 		  <option value="neato">neato</option>
