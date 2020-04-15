@@ -11,7 +11,7 @@ import pydot
 def build_graph_from_file(filename='students.csv', *args, **kwargs):
     with open(filename) as csvfile:
         reader = csv.DictReader(csvfile, delimiter=';')
-        students = list(reader)  # force list to allow pickle
+        students = list(reader)
         return build_graph(students, *args, **kwargs)
 
 
@@ -28,17 +28,17 @@ def build_graph(
     G.graph['edge_weight_attr'] = 'weight'
     G.graph['node_weight_attr'] = list(node_weights_to_ubvec.keys())
 
-    # helpers
+    # helper vars
     name_to_index = {}
     class_to_indices = {}
     school_to_indices = {}
-
     i = 0
+
+    # add students as nodes
     for row in students:
         name = row['Name']
         origin_class = row['School'] + ' ' + row['Class']
         origin_school = row['School']
-        gender = row['Gender']
         gender = row.get('Gender')
 
         G.add_node(
@@ -62,6 +62,7 @@ def build_graph(
             },
         )
 
+        # fill helper vars for preference parsing later on
         name_to_index[name] = i
         if origin_class not in class_to_indices:
             class_to_indices[origin_class] = set()
@@ -73,23 +74,28 @@ def build_graph(
 
         i += 1
 
-    for i, node in G.nodes.items():
+    # add preferences as edges
+    for student, node in G.nodes.items():
         items = node['preferences'].split(',')
-        items = [item.strip() for item in items]
 
         for item in items:
-            if not item:
-                continue
+            item = item.strip()  # remove whitespace
 
+            if not item:
+                continue  # skip empty items
+
+            # parse negation symbol
             multiplier = 1
             if item.startswith('!'):
                 multiplier = -1
                 item = item[1:]
 
+            # parse teacher symbol
             if item.startswith('*'):
                 multiplier = multiplier * 100
                 item = item[1:]
 
+            # parse filter
             (filter_attr, filter_value) = (None, None)
             if item.startswith('['):
                 item_parts = item[1:].split(']')
@@ -102,34 +108,30 @@ def build_graph(
             classmates = class_to_indices.get(item, None)
             friend = name_to_index.get(item, None)
 
+            # set targets and base weight
             if schoolmates is not None:
-                # apply optional filter
-                if filter_attr:
-                    schoolmates = [
-                        i for i, node in G.nodes.items()
-                        if i in schoolmates and node[filter_attr] == filter_value
-                    ]
-
-                for schoolmate in schoolmates:
-                    if i == schoolmate:
-                        continue
-                    add_edge(G, i, schoolmate, weight=schoolmate_weight * multiplier)
+                targets = schoolmates
+                base_weight = schoolmate_weight
             elif classmates is not None:
-                # apply optional filter
-                if filter_attr:
-                    classmates = [
-                        i for i, node in G.nodes.items()
-                        if i in classmates and node[filter_attr] == filter_value
-                    ]
-
-                for classmate in classmates:
-                    if i == classmate:
-                        continue
-                    add_edge(G, i, classmate, weight=classmate_weight * multiplier)
+                targets = classmates
+                base_weight = classmate_weight
             elif friend is not None:
-                add_edge(G, i, friend, weight=friendship_weight * multiplier)
+                targets = [friend]
+                base_weight = friendship_weight
             else:
-                print('Unhandled preference: ' + item)
+                raise ValueError('Could not parse preference: ' + item)
+
+            # apply filter
+            if filter_attr:
+                targets = [
+                    i for i, node in G.nodes.items()
+                    if i in targets and node[filter_attr] == filter_value
+                ]
+
+            # actually add edges
+            for target in targets:
+                if student != target:
+                    add_edge(G, student, target, weight=base_weight * multiplier)
 
     # partition graph in async process because METIS will sometimes throw
     # a segmentation fault which we want to raise properly
@@ -156,7 +158,7 @@ def build_graph(
     for i, p in enumerate(parts):
         G.node[i]['color'] = colors[p]
 
-    # remove low-weight and negative edges to improve visualization
+    # remove low-weight and negative edges to clean up the painted graph
     edges = [e for e in G.edges.data()]
     for edge_obj in edges:
         edge_from, edge_to, edge_data = edge_obj
@@ -180,8 +182,12 @@ def build_graph(
 # helper function to add visuals to edges
 def add_edge(G, node1, node2, weight):
     existing = G.edges.get((node1, node2))
+
+    # do not overwrite an existing edge with heigher weight
     if existing and abs(existing['weight']) > abs(weight):
         return
+
+    # do not overwrite with positive weight if an existing is negative
     if existing and existing['weight'] < 0 and weight > 0:
         return
 
@@ -195,6 +201,7 @@ def add_edge(G, node1, node2, weight):
     )
 
 
+# generate more colors depending on number of partitions
 def get_color_list(n):
     colors = ['red', 'blue', 'green', 'magenta', 'yellow', 'teal']
 
@@ -229,6 +236,6 @@ if __name__ == '__main__':
         print('Failed: ', e)
         sys.exit()
 
-    G.write('graph.dot')
-
     print('Cost: ', cost)
+    G.write('graph.dot')
+    print('Written to graph.dot')

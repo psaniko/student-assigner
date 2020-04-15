@@ -22,6 +22,7 @@ def create_dot_file():
     except KeyError:
         return json_error(400, 'Missing parameter num_partitions')
 
+    # decode CSV data, parse with DictReader and convert to list
     csv_encoded = request.json.get('csv_encoded')
     csv_decoded = b64decode(csv_encoded).decode('utf-8')
     students = list(csv.DictReader(io.StringIO(csv_decoded), delimiter=';'))
@@ -39,6 +40,7 @@ def create_dot_file():
             }),
         )
     except ValueError as e:
+        # usually when METIS fails to partitionfor some reason
         return json_error(400, str(e))
 
     return jsonify({
@@ -47,6 +49,7 @@ def create_dot_file():
     })
 
 
+# helper class for JSON errors
 def json_error(status_code, message):
     response = jsonify({
         'status': status_code,
@@ -56,6 +59,7 @@ def json_error(status_code, message):
     return response
 
 
+# Enable CORS for local development
 @app.after_request
 def after_request(response):
     header = response.headers
