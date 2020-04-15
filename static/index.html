@@ -176,7 +176,7 @@
             text-overflow: ellipsis;
         }
 
-        #addCustomButton {
+        #addCustomNodeButton {
             width: 200px;
             height: 30px;
             background-color: #4CAF50; /* Green */
@@ -188,6 +188,13 @@
             display: inline-block;
             font-size: 14px;
             border-radius: 6px;
+        }
+
+        #customNodeContainer {
+            margin-bottom: 0;
+            margin-top: 0;
+            padding-top: 0;
+            padding-bottom: 0;
         }
 
         .centerClass {
@@ -289,10 +296,71 @@
     
         // basically counts the rows of the .csv dataset and puts them into a label
         function setdatasetSizeStat(datasetStr){
-            lines = datasetStr.split(/\r\n|\r|\n/).length
+            lines = datasetStr.split(/\r\n|\r|\n/).length;
             document.getElementById("datasetSizeStatLabel").innerHTML = lines - 1;
         }
         
+        var customToleranceNodeCount = 0;
+        // adds a custom input and label to set Imbalance tolerances by individual needs
+        function addCustomNodeTolerance(){
+            if (customToleranceNodeCount <= 4){ 
+            var container = document.getElementById("customNodeContainer");
+            // Create an <input> element, set its type and name attributes
+
+            var containerElement = document.createElement("div");
+            containerElement.className = "customContainer";
+            container.appendChild(containerElement);
+
+            var input = document.createElement("input");
+            input.type = "number";
+            input.placeholder = "%";
+            input.className = "customNode";
+            input.step = "0.1";
+            input.style.marginRight = "10px";
+            containerElement.appendChild(input);
+
+            var columnInput = document.createElement("input");
+            columnInput.type = "text";
+            columnInput.placeholder = "Column name";
+            columnInput.className = "customColumn";
+            columnInput.step = "0.1";
+            columnInput.style.width = "120px";
+            columnInput.style.backgroundColor = "#333";
+            columnInput.style.color = "white";
+            containerElement.appendChild(columnInput);
+
+            var customNodeButton = document.createElement("button");
+            customNodeButton.type = "button";
+            customNodeButton.textContent = "X";
+            customNodeButton.className = "customButton";
+            customNodeButton.onclick = deleteCustomNode;
+            customNodeButton.style.fontSize = "15px";
+            customNodeButton.style.marginLeft = "6px";
+            customNodeButton.style.width = "fit-content";
+            customNodeButton.style.height = "fit-content";
+            customNodeButton.style.backgroundColor = "#333";
+            customNodeButton.style.color = "white";
+            containerElement.appendChild(customNodeButton);
+
+            ++customToleranceNodeCount;
+
+            } else {
+                alert("max custom nodes reached")
+            }
+        }
+
+        function deleteCustomNode(e){
+            var container = document.getElementById("customNodeContainer");
+            var deleteParent = document.getElementById(e.target.parentNode.id)
+
+            console.log(e)
+            console.log(parent)
+                    
+            container.removeChild(deleteParent);
+
+            --customToleranceNodeCount;
+        }
+
         // test data to string. dev data, not needed later on
         function testdataToString() {
             var testdataString = `strict graph  {
@@ -324,6 +392,27 @@
             }));
         }
     
+        function grabCustomNodeData(){
+            var container = document.getElementById("customNodeContainer");
+            var customContainers = document.getElementsByClassName("customContainer");
+            var values = {};
+
+            for (let item of customContainers){
+                var tolerance = parseInt(item.getElementsByClassName("customNode")[0].value) / 100 +1;
+                var columnname = item.getElementsByClassName("customColumn")[0].value;
+
+                if (columnname == ""){
+                    continue;
+                }
+                                
+                values[columnname] = tolerance;
+
+                console.log (tolerance, columnname)
+            }
+            console.log(values)
+            return values;
+        }
+
         // Takes file input file and puts out plain text to console.
         function onFormSubmit (e) {
             var reader = new FileReader();
@@ -350,6 +439,13 @@
                     var teacher_multiplier = parseInt(document.getElementById("teacherMultiInput").value);
                     var classSize_imbalance = (parseInt(document.getElementById("classImbaInput").value) / 100 +1);
                     var gender_imbalance = (parseInt(document.getElementById("genderImbaInput").value) / 100 +1);
+
+                    var node_weights_to_ubvec = {
+                        total: classSize_imbalance,
+                        gender: gender_imbalance,
+                    }
+
+                    Object.assign(node_weights_to_ubvec, grabCustomNodeData())
     
                     let dataToBeSent = {
                         num_partitions: num_partitions,
@@ -358,11 +454,9 @@
                         classmate_weight: classmate_weight,
                         schoolmate_weight: schoolmate_weight,
                         teacher_multiplier: teacher_multiplier,
-                        node_weights_to_ubvec:{
-                            total: classSize_imbalance,
-                            gender: gender_imbalance,
-                        }
+                        "node_weights_to_ubvec" : node_weights_to_ubvec,
                     };
+                    console.log(dataToBeSent);
                     fetch("https://student-assigner.herokuapp.com/api/graph", {
                           method: "POST",
                           headers: {
@@ -509,22 +603,21 @@
 			<label for="teacherMultiInput">Teacher multiplier</label>
 		</div>
 
-		<div class="settingItem settingTextItem">
+		<div class="settingItem settingTextItem" id="nodeContainer">
 			<label class="settingTitle">Set node weight imbalance tolerance %</label>
 			<br>
 			<input type="number" id="classImbaInput" value="10" step="0.1" required>
 			<label for="classImbaInput">Class size</label>
 			<br>
 			<input type="number" id="genderImbaInput" value="20" step="0.1" required>
-			<label for="genderImbaInput">Gender</label>
-			<br>
-			<div>
-				<button id="addCustomButton">Add custom</button>
-			</div>
-		</div>
-
+            <label for="genderImbaInput">Gender</label>
+        </div>
+        <div class="settingItem settingTextItem" id="customNodeContainer">
+            <button type="button" id="addCustomNodeButton" onclick="addCustomNodeTolerance()">Add custom (max. 5)</button>
+        </div>
+	
 		<div class="settingItem">
-			<label class="settingTitle">Upload or paste file (.csv)</label>
+			<label class="settingTitle">Upload CSV file</label>
 			<br>
 			<div id="fileChooserButtonContainer">
 		  		<input id="fileChooserButton" type="file" accept=".csv" required>
