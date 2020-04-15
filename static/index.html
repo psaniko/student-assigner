@@ -218,7 +218,6 @@
         }
 
         div#graphContainer {
-            /* border: 2px solid #333; */
             height: 92.5vh;
             width: calc(100% - 265px);
             margin-top: 5px;
@@ -256,6 +255,7 @@
     <script src="https://unpkg.com/d3-graphviz@3.0.0/build/d3-graphviz.js" type="application/javascript"></script>
     <script type="application/javascript">
 
+        // Global variables storing the current graph data and the graphviz itself
         var graph
         var currentGraphData
         var layoutOptionBox
@@ -268,7 +268,6 @@
             layoutOptionBox = document.getElementById("graphLayoutOpt");
             currentLayout = layoutOptionBox.options[layoutOptionBox.selectedIndex].value;
             initiateGraph(currentLayout, )
-            // Global variables storing the current graph data and the graphviz itself
         }
             
         // Function to test looks and functionality of loader. dev purpose only
