@@ -91,6 +91,23 @@
             padding-bottom: 0;
         }
 
+        #gitHubLabel {
+            font-family: Verdana;
+            height: 20px;
+            width: 65px;
+            background-color: #4CAF50; /* Green */
+            border: none;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 4px;
+            margin-left: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
         /* End of Horizontal Navbar */
 
         /* Start of Vertical Navbar */
@@ -567,7 +584,10 @@
 		<button id="tutorialButton" onclick="toggleTutorial()">
 			Tutorial
 		</button>
-    </li>	
+    </li>
+    <li>
+        <a href="https://github.com/psaniko/student-assigner"><label id = "gitHubLabel">GitHub</label></a>
+    </li>
   </ul>
 </div>
 
@@ -579,33 +599,33 @@
 
 		<div class="settingItem settingTextItem">
 			<input type="number" id="partitionNumInput" placeholder="3"  required>
-			<label class="settingTitle" for="partitionNumInput">Partitions</label>
+			<label class="settingTitle" for="partitionNumInput">Classes</label>
 		</div>
 
 		<div class="settingItem settingTextItem">
-			<label class="settingTitle">Enter edge weights</label>
+			<label class="settingTitle">Preference weights</label>
 			<br>
 			<input type="number" id="edgeWeightFriendInput" value="30" required>
 			<label for="edgeWeightFriendInput">Friend wish</label>
 			<br>
 			<input type="number" id="edgeWeightClassInput" value="3" required>
-			<label for="edgeWeightClassInput">Class</label>
+			<label for="edgeWeightClassInput">Same origin class</label>
 			<br>
 			<input type="number" id="edgeWeightSchoolInput" value="1"required>
-			<label for="edgeWeightSchoolInput">Origin school</label>
+			<label for="edgeWeightSchoolInput">Same origin school</label>
 			<br>
 			<input type="number" id="teacherMultiInput" value="100" required>
 			<label for="teacherMultiInput">Teacher multiplier</label>
 		</div>
 
 		<div class="settingItem settingTextItem" id="nodeContainer">
-			<label class="settingTitle">Set node weight imbalance tolerance %</label>
+			<label class="settingTitle">Deviation tolerance %</label>
 			<br>
 			<input type="number" id="classImbaInput" value="10" step="0.1" required>
-			<label for="classImbaInput">Class size</label>
+			<label for="classImbaInput">Equal class size</label>
 			<br>
 			<input type="number" id="genderImbaInput" value="20" step="0.1" required>
-            <label for="genderImbaInput">Gender</label>
+            <label for="genderImbaInput">Equal male/female</label>
         </div>
         <div class="settingItem settingTextItem" id="customNodeContainer">
             <button type="button" id="addCustomNodeButton" onclick="addCustomNodeTolerance()">Add custom (max. 5)</button>
@@ -640,15 +660,17 @@
 		<p>In order to be processed by this tool your data may need some preparation.</p>
 		<p>
 			It is supposed to be sorted in collums. The headers (and cotained data) from left to right should be:
-			<br>
-			"Name" | "Surname" | bla | bla | bla | bla
-			<br>
+            <br>
+            <br>
+			"Gender" | "Name" | "School" | "Recommendation" | "Recommendation_int" | "Preferences"
+            <br>
+            <br>
 			Your data can contain "ä,ü,ö". 
 			<p>
 				References and wishes should be clear (e.g. Lisas wish for "Max" should be changed to his full name, as there could be multiple Maxs in the data).
 				
-				You are going to need a .csv file. This is a common Excel filetype. 
-				Select "Save As" in your excel file, then select ".csv".
+				You are going to need a .csv file. This is a common spreadsheet filetype and can be exported by most programs like Excel, Numbers, Google Sheets etc.
+				Select "Save As" or "Export As" in your spreadsheet file, then select ".csv".
 			</p>
 		</p>
 		
@@ -659,7 +681,7 @@
 		<p>
 			The setting labels indicate the following:
 			<p>
-				- Partitions
+				- Classes
 					-> The number of partitions you want your data to be distributed into.
 			</p>
 			<p>
