@@ -3,3 +3,7 @@ graph.dot
 graph.png
 .DS_STORE
 __pycache__
+node_modules/
+package.json
+package-lock.json
+tutorial.txt
