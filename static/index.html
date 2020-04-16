@@ -6,7 +6,7 @@
 <head>
     <title>Student Assigner</title>
     <style type="text/css">
-        body{
+        body {
             margin: 0;
             font-family: Verdana;
         }
@@ -44,7 +44,7 @@
         }
 
         /* END OF TUTORIAL SECTION */
-        
+
         /* START OF HORIZONTAL NAV */
 
         .nav-horizontal {
@@ -62,7 +62,7 @@
         .nav-horizontal ul {
             list-style-type: none;
             margin: 3px;
-            float: right;         
+            float: right;
             display: block;
             overflow: hidden;
         }
@@ -75,6 +75,23 @@
             padding-right: 10px;
         }
 
+        .horizontalButton {
+            font-family: Verdana;
+            height: 20px;
+            width: max-content;
+            background-color: #4CAF50;
+            /* Green */
+            border: none;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 4px;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
         #costStatLabel {
             border-right: dotted #4CAF50;
             padding-right: 10px;
@@ -85,42 +102,17 @@
             padding-right: 10px;
         }
 
-        #tutorialButton {
-            font-family: Verdana;
-            height: 20px;
-            width: max-content;
-            background-color: #4CAF50; /* Green */
-            border: none;
-            color: white;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            border-radius: 4px;
-            padding-top: 0;
-            padding-bottom: 0;
-        }
-
-        #gitHubLabel {
-            font-family: Verdana;
-            height: 20px;
-            width: 65px;
-            background-color: #4CAF50; /* Green */
-            border: none;
-            color: white;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            border-radius: 4px;
-            margin-left: 0;
-            padding-top: 0;
-            padding-bottom: 0;
-        }
-
         /* End of Horizontal Navbar */
 
         /* Start of Vertical Navbar */
+
+        #webpageHeader {
+            font-size: 23px;
+            padding: 10px;
+            font-family: Verdana;
+            display: flex;
+            align-items: center;
+        }
 
         .nav-vertical form {
             list-style-type: none;
@@ -130,7 +122,7 @@
             height: 100vh;
             background-color: #333;
             overflow: auto;
-            float:left;
+            float: left;
             color: white;
             text-align: left;
         }
@@ -152,12 +144,6 @@
             margin-bottom: 4px;
         }
 
-        .settingTextItem input {
-            width: 50px;
-            font-size: 15px;
-            color: #333;
-        }
-
         .settingItem button {
             text-align: center;
             margin-top: 10px;
@@ -175,12 +161,10 @@
             color: #4CAF50;
         }
 
-        #webpageHeader {
-            font-size: 23px;
-            padding: 10px;
-            font-family: Verdana;
-            display: flex;
-            align-items: center;
+        .settingTextItem input {
+            width: 50px;
+            font-size: 15px;
+            color: #333;
         }
 
         #settingsHeader {
@@ -207,7 +191,7 @@
         #addCustomNodeButton {
             width: 200px;
             height: 30px;
-            background-color: #4CAF50; /* Green */
+            background-color: #4CAF50;
             border: none;
             color: white;
             padding: 8px 5px;
@@ -243,7 +227,7 @@
         #renderGraphButton {
             width: 200px;
             height: 45px;
-            background-color: #4CAF50; /* Green */
+            background-color: #4CAF50;
             border: white;
             color: white;
             padding: 12px 25px;
@@ -263,7 +247,7 @@
             overflow: hidden;
         }
 
-        div#graphDiv{
+        div#graphDiv {
             overflow: hidden;
         }
 
@@ -280,10 +264,15 @@
             left: 50%;
             top: 40%;
         }
-        
+
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
     </style>
 
@@ -297,97 +286,98 @@
         var currentGraphData
         var layoutOptionBox
         var currentLayout
+        var rawDatasetSize
 
         // prevents empty graph window during develepment, might not be needed later
-        window.onload = function() {
+        window.onload = function () {
             currentGraphData = 0;
             graph = d3.select("#graphDiv");
             layoutOptionBox = document.getElementById("graphLayoutOpt");
             currentLayout = layoutOptionBox.options[layoutOptionBox.selectedIndex].value;
-            initiateGraph(currentLayout, )
+            initiateGraph(currentLayout)
         }
-            
+
         // Function to test looks and functionality of loader. dev purpose only
-        function toggleLoader(){
-            if (document.getElementById("loader").style.display == "none"){
+        function toggleLoader() {
+            if (document.getElementById("loader").style.display == "none") {
                 document.getElementById("loader").style.display = "block";
-            }else {
+            } else {
                 document.getElementById("loader").style.display = "none";
             }
         }
-    
+
         // Toggles the tutorial to be shown. is also called by the close button in tutorial.
-        function toggleTutorial(){
-            if (document.getElementById("tutorialContainer").style.display == "none"){
+        function toggleTutorial() {
+            if (document.getElementById("tutorialContainer").style.display == "none") {
                 document.getElementById("tutorialContainer").style.display = "block";
-            }else {
+            } else {
                 document.getElementById("tutorialContainer").style.display = "none";
             }
         }
-    
+
         // sets the cost value of the server-handled dataset into a label for user-transparency
-        function setCostStat(dataset){
+        function setCostStat(dataset) {
             document.getElementById("costStatLabel").innerHTML = dataset.cost;
         }
-    
+
         // basically counts the rows of the .csv dataset and puts them into a label
-        function setdatasetSizeStat(datasetStr){
-            lines = datasetStr.split(/\r\n|\r|\n/).length;
-            document.getElementById("datasetSizeStatLabel").innerHTML = lines - 1;
+        function setdatasetSizeStat(datasetStr) {
+            rawDatasetSize = datasetStr.split(/\r\n|\r|\n/).length;
+            document.getElementById("datasetSizeStatLabel").innerHTML = rawDatasetSize - 1;
         }
-        
+
         var customToleranceNodeCount = 0;
         // adds a custom input and label to set Imbalance tolerances by individual needs
-        function addCustomNodeTolerance(){
-            if (customToleranceNodeCount <= 4){ 
-            var container = document.getElementById("customNodeContainer");
-            // Create an <input> element, set its type and name attributes
+        function addCustomNodeTolerance() {
+            if (customToleranceNodeCount <= 4) {
+                var container = document.getElementById("customNodeContainer");
+                // Create an <input> element, set its type and name attributes
 
-            var containerElement = document.createElement("div");
-            containerElement.className = "customContainer";
-            container.appendChild(containerElement);
+                var containerElement = document.createElement("div");
+                containerElement.className = "customContainer";
+                container.appendChild(containerElement);
 
-            var input = document.createElement("input");
-            input.type = "number";
-            input.placeholder = "%";
-            input.className = "customNode";
-            input.step = "0.1";
-            input.style.marginRight = "10px";
-            containerElement.appendChild(input);
+                var input = document.createElement("input");
+                input.type = "number";
+                input.placeholder = "%";
+                input.className = "customNode";
+                input.step = "0.1";
+                input.style.marginRight = "10px";
+                containerElement.appendChild(input);
 
-            var columnInput = document.createElement("input");
-            columnInput.type = "text";
-            columnInput.placeholder = "Column name";
-            columnInput.className = "customColumn";
-            columnInput.step = "0.1";
-            columnInput.style.width = "120px";
-            columnInput.style.backgroundColor = "#333";
-            columnInput.style.color = "white";
-            containerElement.appendChild(columnInput);
+                var columnInput = document.createElement("input");
+                columnInput.type = "text";
+                columnInput.placeholder = "Column name";
+                columnInput.className = "customColumn";
+                columnInput.step = "0.1";
+                columnInput.style.width = "120px";
+                columnInput.style.backgroundColor = "#333";
+                columnInput.style.color = "white";
+                containerElement.appendChild(columnInput);
 
-            var customNodeButton = document.createElement("button");
-            customNodeButton.type = "button";
-            customNodeButton.textContent = "X";
-            customNodeButton.className = "customButton";
-            customNodeButton.onclick = deleteCustomNode;
-            customNodeButton.style.fontSize = "15px";
-            customNodeButton.style.marginLeft = "6px";
-            customNodeButton.style.width = "fit-content";
-            customNodeButton.style.height = "fit-content";
-            customNodeButton.style.backgroundColor = "#333";
-            customNodeButton.style.color = "white";
-            containerElement.appendChild(customNodeButton);
+                var customNodeButton = document.createElement("button");
+                customNodeButton.type = "button";
+                customNodeButton.textContent = "X";
+                customNodeButton.className = "customButton";
+                customNodeButton.onclick = deleteCustomNode;
+                customNodeButton.style.fontSize = "15px";
+                customNodeButton.style.marginLeft = "6px";
+                customNodeButton.style.width = "fit-content";
+                customNodeButton.style.height = "fit-content";
+                customNodeButton.style.backgroundColor = "#333";
+                customNodeButton.style.color = "white";
+                containerElement.appendChild(customNodeButton);
 
-            ++customToleranceNodeCount;
+                ++customToleranceNodeCount;
 
             } else {
                 alert("max custom nodes reached")
             }
         }
 
-        function deleteCustomNode(e){
+        function deleteCustomNode(e) {
             var container = document.getElementById("customNodeContainer");
-                  
+
             container.removeChild(e.target.parentNode);
 
             --customToleranceNodeCount;
@@ -413,7 +403,7 @@
                 }`
             return testdataString
         }
-    
+
         // first we use encodeURIComponent to get percent-encoded UTF-8,
         // then we convert the percent encodings into raw bytes which
         // can be fed into btoa.
@@ -421,56 +411,56 @@
             return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
                 function toSolidBytes(match, p1) {
                     return String.fromCharCode('0x' + p1);
-            }));
+                }));
         }
-    
-        function grabCustomNodeData(){
+
+        function grabCustomNodeData() {
             var container = document.getElementById("customNodeContainer");
             var customContainers = document.getElementsByClassName("customContainer");
             var values = {};
 
-            for (let item of customContainers){
-                var tolerance = parseInt(item.getElementsByClassName("customNode")[0].value) / 100 +1;
+            for (let item of customContainers) {
+                var tolerance = parseInt(item.getElementsByClassName("customNode")[0].value) / 100 + 1;
                 var columnname = item.getElementsByClassName("customColumn")[0].value;
 
-                if (columnname == ""){
+                if (columnname == "") {
                     continue;
                 }
-                                
+
                 values[columnname] = tolerance;
 
-                console.log (tolerance, columnname)
+                console.log(tolerance, columnname)
             }
             console.log(values)
             return values;
         }
 
         // Takes file input file and puts out plain text to console.
-        function onFormSubmit (e) {
+        function onFormSubmit(e) {
             var reader = new FileReader();
             var fileInput = document.getElementById('fileChooserButton').files[0];
             var layoutOptionBox = document.getElementById("graphLayoutOpt")
             var currentLayout = layoutOptionBox.options[layoutOptionBox.selectedIndex].value
-    
+
             document.getElementById("loader").style.display = "block";
-    
-            if (fileInput != null){
+
+            if (fileInput != null) {
                 console.log(`File input clicked. Chosen file is ${fileInput.name}`);
                 reader.readAsText(fileInput)
-                reader.onload = function() {
+                reader.onload = function () {
                     var fileInputText = reader.result;
                     // var fileInputB64 = btoa(fileInputText);
                     var fileInputB64 = b64EncodeUnicode(fileInputText);
                     console.log(`Value Test: current teacher multiplier is ${teacherMultiInput.value}`);
                     console.log(`Value Test: current Partition count is ${partitionNumInput.value}`);
-    
+
                     var num_partitions = parseInt(document.getElementById("partitionNumInput").value);
                     var friendship_weight = parseInt(document.getElementById("edgeWeightFriendInput").value);
                     var classmate_weight = parseInt(document.getElementById("edgeWeightClassInput").value);
                     var schoolmate_weight = parseInt(document.getElementById("edgeWeightSchoolInput").value);
                     var teacher_multiplier = parseInt(document.getElementById("teacherMultiInput").value);
-                    var classSize_imbalance = (parseInt(document.getElementById("classImbaInput").value) / 100 +1);
-                    var gender_imbalance = (parseInt(document.getElementById("genderImbaInput").value) / 100 +1);
+                    var classSize_imbalance = (parseInt(document.getElementById("classImbaInput").value) / 100 + 1);
+                    var gender_imbalance = (parseInt(document.getElementById("genderImbaInput").value) / 100 + 1);
 
                     var node_weights_to_ubvec = {
                         total: classSize_imbalance,
@@ -478,7 +468,7 @@
                     }
 
                     Object.assign(node_weights_to_ubvec, grabCustomNodeData())
-    
+
                     let dataToBeSent = {
                         num_partitions: num_partitions,
                         csv_encoded: fileInputB64,
@@ -486,40 +476,58 @@
                         classmate_weight: classmate_weight,
                         schoolmate_weight: schoolmate_weight,
                         teacher_multiplier: teacher_multiplier,
-                        "node_weights_to_ubvec" : node_weights_to_ubvec,
+                        "node_weights_to_ubvec": node_weights_to_ubvec,
                     };
-                    console.log(dataToBeSent);
                     fetch("https://student-assigner.herokuapp.com/api/graph", {
-                          method: "POST",
-                          headers: {
-                              "Content-Type": "application/json",
-                              },
-                          body: JSON.stringify(dataToBeSent)
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(dataToBeSent)
                     })
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log(data.dot);
-                        currentGraphData = data;
-                        document.getElementById("loader").style.display = "none";
-                        rerenderGraph(currentLayout, currentGraphData.dot);
-                        setCostStat(currentGraphData);
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log("Content of dot is:" + data.dot);
+                            currentGraphData = data;
+                            document.getElementById("loader").style.display = "none";
+                            rerenderGraph(currentLayout, currentGraphData.dot);
+                            setCostStat(currentGraphData);
                         })
-                setdatasetSizeStat(fileInputText);
+                    setdatasetSizeStat(fileInputText);
                 };
             }
             else alert("No File selected!");
-    
-            reader.onerror = function() {
+
+            reader.onerror = function () {
                 console.error("Error reading File")
             }
         }
-    
+
+        // iterates .dot data and sorts students into color-classes {color: [student name, ...]}
+        // classes are defined by color inside the .dot file
+        function sortTeams2() {
+            var classes = {};
+            var dataInRows = currentGraphData.dot.split("\n", rawDatasetSize);
+            let nameRegex = /label="(.+?)"/s;
+            let colorRegex = /color=(.+?),/s;
+            for (let row of dataInRows) {
+                if (row.match(colorRegex) == null) continue
+                var rowColor = row.match(colorRegex)[1]
+                if (rowColor in classes) {
+                    classes[rowColor].push(row.match(nameRegex)[1]);
+                } else {
+                    classes[rowColor] = [row.match(nameRegex)[1]];
+                }
+            }
+            return classes;
+        }
+
         // watches layout select and rerenders graph everytime layout changes
         function layoutOnChange() {
             var layoutOptionBox = document.getElementById("graphLayoutOpt")
             var chosenLayout = layoutOptionBox.options[layoutOptionBox.selectedIndex].value
-    
-            if (currentGraphData.dot != null){
+
+            if (currentGraphData.dot != null) {
                 rerenderGraph(chosenLayout, currentGraphData.dot)
                 console.log(`Layout changed to ${chosenLayout}. Graph rebuilt with current data`)
             } else {
@@ -527,222 +535,240 @@
                 alert("Error. No graph data available.")
             }
         }
-    
+
         // Initializes graph. sets base values that have no need to be changed later on.
         // For dataset or layout changes see rerenderGraph()
-        function initiateGraph(){
+        function initiateGraph() {
             var ww = window.innerWidth
             var wh = window.innerHeight
-    
+
             graph
-            .graphviz()
-            .width(ww - 255)
-            .height(wh*0.92)
-            .fit(false)
-            .growEnteringEdges(true)
-            .logEvents(true)
-            .on("start", function(){
-                document.getElementById("loader").style.display = "block";
-                console.log("graphviz start event triggered")
+                .graphviz()
+                .width(ww - 255)
+                .height(wh * 0.92)
+                .fit(false)
+                .growEnteringEdges(true)
+                .logEvents(true)
+                .on("start", function () {
+                    document.getElementById("loader").style.display = "block";
+                    console.log("graphviz start event triggered")
                 })
-            .on("layoutStart", function(){
-                document.getElementById("loader").style.display = "block";
-                console.log("graphviz layoutStart triggered")
+                .on("layoutStart", function () {
+                    document.getElementById("loader").style.display = "block";
+                    console.log("graphviz layoutStart triggered")
                 })
-            .on("renderEnd", function(){
-                document.getElementById("loader").style.display = "none"
-                console.log("graphviz end triggered")
-            })
+                .on("renderEnd", function () {
+                    document.getElementById("loader").style.display = "none"
+                    console.log("graphviz end triggered")
+                })
         }
-    
+
         // graph builder. selects where to, then initializes graphbuilder. data input at .dot()
         function rerenderGraph(layout, graphBuildingData) {
-            if (graphBuildingData != 0){		
+            if (graphBuildingData != 0) {
                 graph
-                .graphviz()
-                .engine(layout)
-                .dot(graphBuildingData)
-                .render()
+                    .graphviz()
+                    .engine(layout)
+                    .dot(graphBuildingData)
+                    .render()
             } else {
                 alert("Error: No graph data available.")
-            }		
-        }        
-    console.log("reached final scripttag. Thats good!")
+            }
+        }
+        console.log("reached final scripttag. Thats good!")
     </script>
 </head>
 
 <body>
 
-<div class="nav-horizontal">
-  <ul id="navHorizontalUl" class="right">
-    
-  	<!-- <li>
+    <div class="nav-horizontal">
+        <ul id="navHorizontalUl" class="right">
+            <!-- TODO cleanup Classes -->
+            <!-- <li>
 		<button onclick="toggleLoader()">
 			toggle loader
-		</button>
-    </li> -->
+		</button>-->
 
-    <li><label class="settingTitle">Cost:</label></li>
-    <li><label id="costStatLabel"></label></li>
-	<li><label class="settingTitle">Dataset size:</label></li>
-	<li><label id="datasetSizeStatLabel"></label></li>
-    
-    <li class="settingTitle">Graph layout:</li>
-    
-	<li>	
-  		<select id="graphLayoutOpt" onchange="layoutOnChange()">
-          <option value="dot" selected="">dot</option>
-          <option value="patchwork">Patchwork</option>		  
-		  <option value="circo">circo</option>
-		  <option value="fdp">fdp</option>
-		  <option value="neato">neato</option>
-		  <option value="osage">osage</option>
-		  <option value="twopi">twopi</option>
-		</select>
-    </li> 
-    <li>
-		<button id="tutorialButton" onclick="toggleTutorial()">
-			Tutorial
-		</button>
-    </li>
-    <li>
-        <a href="https://github.com/psaniko/student-assigner"><label id = "gitHubLabel">GitHub</label></a>
-    </li>
-  </ul>
-</div>
+            <li><label class="settingTitle">Cost:</label></li>
+            <li><label id="costStatLabel"></label></li>
+            <li><label class="settingTitle">Dataset size:</label></li>
+            <li><label id="datasetSizeStatLabel"></label></li>
 
-<div class="nav-vertical">
-	<form class="settingsForm" onsubmit="onFormSubmit(); return false">
-		<div class="settingTitle">
-			<label id=webpageHeader>Student Assigner</label>
+            <li class="settingTitle">Graph layout:</li>
+
+            <li>
+                <select id="graphLayoutOpt" onchange="layoutOnChange()">
+                    <option value="dot" selected="">dot</option>
+                    <option value="patchwork">Patchwork</option>
+                    <option value="circo">circo</option>
+                    <option value="fdp">fdp</option>
+                    <option value="neato">neato</option>
+                    <option value="osage">osage</option>
+                    <option value="twopi">twopi</option>
+                </select>
+            </li>
+            <li>
+                <button class="horizontalButton" id="tutorialButton" onclick="toggleTutorial()">
+                    Tutorial
+                </button>
+            </li>
+            <li>
+                <button class="horizontalButton id=" exportButton" onclick="sortTeams2()">
+                    Export
+                </button>
+            </li>
+            <li>
+                <a href="https://github.com/psaniko/student-assigner"><label class="horizontalButton">GitHub</label></a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="nav-vertical">
+        <form class="settingsForm" onsubmit="onFormSubmit(); return false">
+            <div class="settingTitle">
+                <label id=webpageHeader>Student Assigner</label>
+            </div>
+            <br>
+            <div class="settingItem">
+                <label class="settingTitle">Upload CSV file</label>
+                <br>
+                <div id="fileChooserButtonContainer">
+                    <input id="fileChooserButton" type="file" accept=".csv" required>
+                </div>
+            </div>
+            <div class="settingItem settingTextItem">
+                <label class="settingTitle">Basic</label>
+                <br>
+                <input type="number" id="partitionNumInput" value="3" required>
+                <label for="partitionNumInput">Classes</label>
+            </div>
+            <div class="settingItem settingTextItem">
+                <label class="settingTitle">Preference weights</label>
+                <br>
+                <input type="number" id="edgeWeightFriendInput" value="30" required>
+                <label for="edgeWeightFriendInput">A person</label>
+                <br>
+                <input type="number" id="edgeWeightClassInput" value="3" required>
+                <label for="edgeWeightClassInput">A class</label>
+                <br>
+                <input type="number" id="edgeWeightSchoolInput" value="1" required>
+                <label for="edgeWeightSchoolInput">A school</label>
+                <br>
+                <input type="number" id="teacherMultiInput" value="100" required>
+                <label for="teacherMultiInput">Teacher multiplier</label>
+            </div>
+            <div class="settingItem settingTextItem" id="nodeContainer">
+                <label class="settingTitle">Max. difference in %</label>
+                <br>
+                <input type="number" id="classImbaInput" value="10" step="0.1" required>
+                <label for="classImbaInput">Class size</label>
+                <br>
+                <input type="number" id="genderImbaInput" value="20" step="0.1" required>
+                <label for="genderImbaInput">Male / Female</label>
+            </div>
+            <div class="settingItem settingTextItem" id="customNodeContainer">
+                <button type="button" id="addCustomNodeButton" onclick="addCustomNodeTolerance()">Add custom</button>
+            </div>
+            <div class="settingItem" id="renderButtonContainer">
+                <input id="renderGraphButton" type="submit" value="Render Graph"></button>
+            </div>
+        </form>
+
+        <div id="loader" style="display: none;"></div>
+
+        <div id="graphContainer">
+            <div id="graphDiv"></div>
         </div>
-        <br>
-        <div class="settingItem">
-			<label class="settingTitle">Upload CSV file</label>
-			<br>
-			<div id="fileChooserButtonContainer">
-		  		<input id="fileChooserButton" type="file" accept=".csv" required>
-			</div>
+
+        <div class="tutorialContainer" id="tutorialContainer" style="display: none;">
+            <div class="tutorialText">
+                <button id="closeTutorialButton" onclick="toggleTutorial()">Close</button>
+                <h2>Tutorial - Welcome to Student Assigner</h2>
+                <h5>Note: This tutorial is (supposed to be) pretty detailed. If you're into tech you can most propably
+                    skip it.</h5>
+
+                <h4>1) Format and save your data</h4>
+                <p>In order to be processed by this tool your data may need some preparation.</p>
+                <p>
+                    It is supposed to be sorted in collums. The headers (and cotained data) from left to right should
+                    be:
+                    <br>
+                    <br>
+                    "Gender" | "Name" | "School" | "Recommendation" | "Recommendation_int" | "Preferences"
+                    <br>
+                    <br>
+                    Your data can contain "ä,ü,ö".
+                    <p>
+                        References and wishes should be clear (e.g. Lisas wish for "Max" should be changed to his full
+                        name, as there could be multiple Maxs in the data).
+
+                        You are going to need a .csv file. This is a common spreadsheet filetype and can be exported by
+                        most programs like Excel, Numbers, Google Sheets etc.
+                        Select "Save As" or "Export As" in your spreadsheet file, then select ".csv".
+                    </p>
+                </p>
+
+                <h4>2) Upload your file</h4>
+                <p>Click the "Choose file" button on the upper left of the website. Choose your .csv file.</p>
+
+                <h4>3) Fill the settings</h4>
+                <p>
+                    The setting labels indicate the following:
+                    <p>
+                        - Classes
+                        -> The number of partitions you want your data to be distributed into.
+                    </p>
+                    <p>
+                        - Edge weights
+                        -> The amount of "weight" you want a certain kind of connection (edge) to have. Higher is
+                        heavier/more important.
+                        You usually want the weight of the teacher Multiplier to be much higher than the wishes of your
+                        well-known troublemaker-crew.
+                        "Class" and "School" weight declares the weight of the same origin school as a factor to
+                        distribution.
+                        <!-- TODO -->
+                    </p>
+                    <p>
+                        - Node weight imbalance tolerance %
+                        -> Sounds complicated, right? Well - it is. In order to build the amount of partitions you need
+                        the tool needs to make a few cuts.
+                        The node weight imbalance tolerance % indicates how much imbalance you are willing to allow the
+                        tool to complete its calculations.
+                        Please note: if this tolerance isn't high enough it might get mathematically impossible to build
+                        your distribution.
+                    </p>
+
+                    <p>
+                        You need to set a value for "Partitions" to proceed, as the remainig setting values are
+                        prefilled for you.
+                        Feel free to change them, tho.
+                    </p>
+                </p>
+
+                <h4>4) Render your graph</h4>
+                <p>
+                    Click "Render Graph" on the lower left of the website.
+                    After a short loading time, indicated by a fancy spinner in the middle of your screen, your graph
+                    will appear.
+                </p>
+
+                <h4>5) Fiddle with your graph</h4>
+                <p>
+                    You can change the layout in which your data is displayed using the dropdown box in the upper right.
+                    They all provide different approaches to display and sort your data visually.
+                    If you change the layout and your graph disappears - don't panic. Zoom in and out to see if you can
+                    find it again. You most likely will.
+                </p>
+
+                <p>
+                    You can Zoom in and out of the graph using your mousewheel.
+                    You can move the graph around by left click and holding.
+                </p>
+
+                <h5>Anything wrong? Send us a message and we'll see if we can sort it out. Find our contact data on the
+                    upper right</h5>
+            </div>
         </div>
-        <div class="settingItem settingTextItem">
-            <label class="settingTitle">Basic</label>
-            <br>
-			<input type="number" id="partitionNumInput" placeholder="3"  required>
-			<label for="partitionNumInput">Classes</label>
-		</div>
-		<div class="settingItem settingTextItem">
-			<label class="settingTitle">Preference weights</label>
-			<br>
-			<input type="number" id="edgeWeightFriendInput" value="30" required>
-			<label for="edgeWeightFriendInput">A person</label>
-			<br>
-			<input type="number" id="edgeWeightClassInput" value="3" required>
-			<label for="edgeWeightClassInput">A class</label>
-			<br>
-			<input type="number" id="edgeWeightSchoolInput" value="1"required>
-			<label for="edgeWeightSchoolInput">A school</label>
-			<br>
-			<input type="number" id="teacherMultiInput" value="100" required>
-			<label for="teacherMultiInput">Teacher multiplier</label>
-		</div>
-		<div class="settingItem settingTextItem" id="nodeContainer">
-			<label class="settingTitle">Max. difference in %</label>
-			<br>
-			<input type="number" id="classImbaInput" value="10" step="0.1" required>
-			<label for="classImbaInput">Class size</label>
-			<br>
-			<input type="number" id="genderImbaInput" value="20" step="0.1" required>
-            <label for="genderImbaInput">Male / Female</label>
-        </div>
-        <div class="settingItem settingTextItem" id="customNodeContainer">
-            <button type="button" id="addCustomNodeButton" onclick="addCustomNodeTolerance()">Add custom</button>
-        </div>
-		<div class="settingItem" id="renderButtonContainer">
-			<input id="renderGraphButton" type="submit" value="Render Graph"></button>
-		</div>
-	</form>
-
-<div id="loader" style="display: none;"></div>
-
-<div id="graphContainer">
-	<div id="graphDiv"></div>
-</div>
-
-<div class="tutorialContainer" id="tutorialContainer" style="display: none;">
-	<div class="tutorialText">
-		<button id="closeTutorialButton" onclick="toggleTutorial()">Close</button>
-		<h2>Tutorial - Welcome to Student Assigner</h2>
-		<h5>Note: This tutorial is (supposed to be) pretty detailed. If you're into tech you can most propably skip it.</h5>
-
-		<h4>1) Format and save your data</h4>
-		<p>In order to be processed by this tool your data may need some preparation.</p>
-		<p>
-			It is supposed to be sorted in collums. The headers (and cotained data) from left to right should be:
-            <br>
-            <br>
-			"Gender" | "Name" | "School" | "Recommendation" | "Recommendation_int" | "Preferences"
-            <br>
-            <br>
-			Your data can contain "ä,ü,ö". 
-			<p>
-				References and wishes should be clear (e.g. Lisas wish for "Max" should be changed to his full name, as there could be multiple Maxs in the data).
-				
-				You are going to need a .csv file. This is a common spreadsheet filetype and can be exported by most programs like Excel, Numbers, Google Sheets etc.
-				Select "Save As" or "Export As" in your spreadsheet file, then select ".csv".
-			</p>
-		</p>
-		
-		<h4>2) Upload your file</h4>
-		<p>Click the "Choose file" button on the lower left of the website. Choose your .csv file.</p>
-		
-		<h4>3) Fill the settings</h4>
-		<p>
-			The setting labels indicate the following:
-			<p>
-				- Classes
-					-> The number of partitions you want your data to be distributed into.
-			</p>
-			<p>
-				- Edge weights
-					->  The amount of "weight" you want a certain kind of connection (edge) to have. Higher is heavier/more important.
-						You usually want the weight of the teacher Multiplier to be much higher than the wishes of your well-known troublemaker-crew.
-						"Class" and "School" weight declares the weight of the same origin school as a factor to distribution.
-						<!-- TODO -->
-			</p>
-			<p>
-				- Node weight imbalance tolerance %
-					->  Sounds complicated, right? Well - it is. In order to build the amount of partitions you need the tool needs to make a few cuts.
-						The node weight imbalance tolerance % indicates how much imbalance you are willing to allow the tool to complete its calculations.
-						Please note: if this tolerance isn't high enough it might get mathematically impossible to build your distribution.
-			</p>
-			
-			<p>
-				You need to set a value for "Partitions" to proceed, as the remainig setting values are prefilled for you.
-				Feel free to change them, tho. 
-			</p>
-		</p>
-		
-		<h4>4) Render your graph</h4>
-		<p>
-			Click "Render Graph" on the lower left of the website. 
-			After a short loading time, indicated by a fancy spinner in the middle of your screen, your graph will appear.
-		</p>
-		
-		<h4>5) Fiddle with your graph</h4>
-		<p>
-			You can change the layout in which your data is displayed using the dropdown box in the upper right.
-			They all provide different approaches to display and sort your data visually.
-			If you change the layout and your graph disappears - don't panic. Zoom in and out to see if you can find it again. You most likely will.
-		</p>
-		
-		<p>
-			You can Zoom in and out of the graph using your mousewheel.
-			You can move the graph around by left click and holding.
-		</p>
-		
-		<h5>Anything wrong? Send us a message and we'll see if we can sort it out. Find our contact data on the upper right</h5>
-	</div>
-</div>
 
 </body>
 
