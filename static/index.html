@@ -1,17 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <title>Student Assigner</title>
     <meta name="google-site-verification" content="S6jbyJ6CgUQl1OJ30p_LyAyQKBt7W2QVisHCd-D3K8k" />
-    <meta charset="utf-8">
-    <html lang="en">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="keywords"
-        content="student, assigner, students, assign, class, classes, distribution, preferences, wish, wishes, pool, class size, divide, partition, .dot, graphviz,">
+        content="student, assigner, students, assign, class, classes, distribution, preferences, wish, wishes, pool, class size, divide, partition, .dot, graphviz," />
     <meta name="description"
-        content="Algorithmically divides a pool of students into classes, considering as many of their preferences as possible while balancing class size and optionally other attributes.">
-    <meta name="author" content="Psaniko, Xabepa">
+        content="Algorithmically divides a pool of students into classes, considering as many of their preferences as possible while balancing class size and optionally other attributes." />
+    <meta name="author" content="Psaniko, Xabepa" />
     <meta name="revised detail" content="17/04/2020" />
 
     <style type="text/css">
@@ -22,7 +21,7 @@
 
         /* Tutorial Popup Section */
 
-        .tutorialContainer {
+        .overlayContainer {
             display: none;
             border: 5px solid #333;
             background-color: rgb(248, 244, 244);
@@ -31,18 +30,17 @@
             position: fixed;
             bottom: 0%;
             right: 0%;
-            font-family: Verdana, Geneva, Tahoma, sans-serif;
             overflow: auto;
         }
 
-        .tutorialText {
+        .overlayText {
             color: #333;
             margin-left: 5px;
             font-size: 15px;
             overflow: auto;
         }
 
-        .tutorialContainer button {
+        .overlayContainer button {
             width: max-content;
             color: white;
             background-color: #4CAF50;
@@ -56,7 +54,6 @@
         }
 
         /* END OF TUTORIAL SECTION */
-
         /* START OF HORIZONTAL NAV */
 
         .nav-horizontal {
@@ -67,7 +64,6 @@
             padding-bottom: 5px;
             background-color: #333;
             color: #4CAF50;
-            font-family: Verdana, Geneva, Tahoma, sans-serif;
             font-size: 15px;
             float: right;
         }
@@ -120,7 +116,6 @@
         #webpageHeader {
             font-size: 23px;
             padding: 10px;
-            font-family: Verdana, Geneva, Tahoma, sans-serif;
             display: flex;
             align-items: center;
         }
@@ -145,7 +140,6 @@
         .settingItem {
             padding: 10px;
             font-size: 17px;
-            font-family: Verdana, Geneva, Tahoma, sans-serif;
             border-bottom: dotted #4CAF50;
             margin-top: 10px;
             margin-bottom: 10px;
@@ -290,18 +284,6 @@
         var layoutOptionBox
         var currentLayout
         var rawDatasetSize
-
-        // window.onresize = function () {
-        //     var ww = window.innerWidth
-        //     var wh = window.innerHeight
-
-        //     graph
-        //     .graphviz()
-        //     .width(ww - 255)
-        //     .height(wh * 0.94)
-
-        //     rerenderGraph()
-        // }
 
         // prevents empty graph window during develepment, might not be needed later
         window.onload = function () {
@@ -545,7 +527,7 @@
                 if (exportDataContainer.style.display == "none") {
                     exportDataContainer.style.display = "block";
                     for (const [key, value] of Object.entries(shownExportData)) {
-                        textContainer.push("<p><h3>Class "+key+" ("+value.length+")</h3></p>", value, "<br>")
+                        textContainer.push("<p><h3>Class " + key + " (" + value.length + ")</h3></p>", value, "<br>")
                     }
                     exportDataText.innerHTML = textContainer
                 } else {
@@ -619,14 +601,11 @@
 
     <div class="nav-horizontal">
         <ul class="horizontalUnsortedListContainer">
-
             <li><label class="settingTitle">Cost:</label></li>
             <li><label id="costStatLabel"></label></li>
             <li><label class="settingTitle">Dataset size:</label></li>
             <li><label id="datasetSizeStatLabel"></label></li>
-
             <li class="settingTitle">Graph layout:</li>
-
             <li>
                 <select id="graphLayoutOpt" onchange="layoutOnChange()">
                     <option value="dot" selected="">dot</option>
@@ -712,16 +691,15 @@
             <div id="graphDiv"></div>
         </div>
 
-        <div class="tutorialContainer" id="exportDataContainer" style="display: none;">
-            <button class="closeTutorialButton" onclick="toggleExportWindow()">Close</button>
-
-            <div class="tutorialText" id="exportDataText">
+        <div class="overlayContainer" id="exportDataContainer" style="display: none;">
+            <button class="overlayButton" onclick="toggleExportWindow()">Close</button>
+            <div class="overlayText" id="exportDataText">
             </div>
         </div>
 
-        <div class="tutorialContainer" id="tutorialContainer" style="display: none;">
-            <div class="tutorialText">
-                <button class="closeTutorialButton" onclick="toggleTutorial()">Close</button>
+        <div class="overlayContainer" id="tutorialContainer" style="display: none;">
+            <div class="overlayText">
+                <button class="overlayButton" onclick="toggleTutorial()">Close</button>
                 <h2>Tutorial - Welcome to Student Assigner</h2>
                 <h5>This tool algorithmically divides a pool of students into classes, considering as many of their
                     preferences as possible while balancing class size and optionally other attributes.
@@ -835,8 +813,10 @@
                 </p>
 
                 <h4>Anything wrong? Send us a message and we'll see if we can sort it out. Find our contact data and the
-                    <a href="https://github.com/psaniko/student-assigner target=" _blank"">GitHub</a> repository for this project on the upper right.</h4>
-                <h5>This project is licensed under the GNU General Public License v3.0 - see our <a href="https://github./psaniko/student-assigner" target="_blank">GitHub</a> for details</h5>
+                    <a href="https://github.com/psaniko/student-assigner target=" _blank"">GitHub</a> repository for
+                    this project on the upper right.</h4>
+                <h5>This project is licensed under the GNU General Public License v3.0 - see our <a
+                        href="https://github./psaniko/student-assigner" target="_blank">GitHub</a> for details</h5>
             </div>
         </div>
 </body>
