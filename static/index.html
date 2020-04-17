@@ -1,39 +1,38 @@
 <!DOCTYPE html>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<html lang="en">
+<html>
 
 <head>
     <title>Student Assigner</title>
+    <meta name="google-site-verification" content="S6jbyJ6CgUQl1OJ30p_LyAyQKBt7W2QVisHCd-D3K8k" />
+    <meta charset="utf-8">
+    <html lang="en">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords"
+        content="student, assigner, students, assign, class, classes, distribution, preferences, wish, wishes, pool, class size, divide, partition, .dot, graphviz,">
+    <meta name="description"
+        content="Algorithmically divides a pool of students into classes, considering as many of their preferences as possible while balancing class size and optionally other attributes.">
+    <meta name="author" content="Psaniko, Xabepa">
+    <meta name="revised detail" content="17/04/2020" />
+
     <style type="text/css">
         body {
             margin: 0;
-            font-family: Verdana;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
         }
 
         /* Tutorial Popup Section */
+
         .tutorialContainer {
             display: none;
-            border: 8px solid #222;
+            border: 5px solid #333;
             background-color: rgb(248, 244, 244);
+            height: 95vh;
+            width: calc(100% - 260px);
             position: fixed;
-            top: 5%;
-            left: 5%;
-            width: 90%;
-            height: 90%;
-            font-family: monospace;
+            bottom: 0%;
+            right: 0%;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
             overflow: auto;
-        }
-
-        .tutorialContainer button {
-            width: max-content;
-            color: #333;
-            background-color: #4CAF50;
-            margin: 10px;
-            font-size: 22px;
-            position: fixed;
-            top: 6%;
-            right: 6%;
         }
 
         .tutorialText {
@@ -43,44 +42,56 @@
             overflow: auto;
         }
 
+        .tutorialContainer button {
+            width: max-content;
+            color: white;
+            background-color: #4CAF50;
+            border-radius: 5px;
+            margin: 10px;
+            font-size: 22px;
+            padding: 3px 10px;
+            position: fixed;
+            top: 4.5%;
+            right: 3%;
+        }
+
         /* END OF TUTORIAL SECTION */
 
         /* START OF HORIZONTAL NAV */
 
         .nav-horizontal {
             width: calc(100% - 250px);
-            background-color: #333;
-            color: #4CAF50;
-            font-family: Verdana;
-            font-size: 15px;
-            float: right;
+            height: 3.5vh;
             overflow: auto;
             padding-top: 5px;
             padding-bottom: 5px;
+            background-color: #333;
+            color: #4CAF50;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+            font-size: 15px;
+            float: right;
         }
 
-        .nav-horizontal ul {
+        .horizontalUnsortedListContainer {
             list-style-type: none;
             margin: 3px;
             float: right;
-            display: block;
-            overflow: hidden;
         }
 
-        .right li {
+        .horizontalUnsortedListContainer li {
             display: inline-block;
             text-align: center;
             text-decoration: none;
             padding-left: 10px;
             padding-right: 10px;
+            overflow: auto;
         }
 
         .horizontalButton {
-            font-family: Verdana;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
             height: 20px;
             width: max-content;
             background-color: #4CAF50;
-            /* Green */
             border: none;
             color: white;
             text-align: center;
@@ -109,7 +120,7 @@
         #webpageHeader {
             font-size: 23px;
             padding: 10px;
-            font-family: Verdana;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
             display: flex;
             align-items: center;
         }
@@ -134,8 +145,10 @@
         .settingItem {
             padding: 10px;
             font-size: 17px;
-            font-family: Verdana;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
             border-bottom: dotted #4CAF50;
+            margin-top: 10px;
+            margin-bottom: 10px;
         }
 
         .settingItem input {
@@ -144,27 +157,16 @@
             margin-bottom: 4px;
         }
 
-        .settingItem button {
-            text-align: center;
-            margin-top: 10px;
-            margin-bottom: 10px;
-        }
-
-        .settingItem select {
-            margin-top: 10px;
-            margin-bottom: 10px;
+        .settingTextItem input {
+            width: 50px;
+            font-size: 15px;
+            color: #333;
         }
 
         .settingTitle {
             font-weight: bold;
             font-size: 17px;
             color: #4CAF50;
-        }
-
-        .settingTextItem input {
-            width: 50px;
-            font-size: 15px;
-            color: #333;
         }
 
         #settingsHeader {
@@ -200,6 +202,7 @@
             display: inline-block;
             font-size: 15px;
             border-radius: 6px;
+            margin-bottom: 10px;
         }
 
         #customNodeContainer {
@@ -211,12 +214,6 @@
 
         #nodeContainer {
             border-bottom: none;
-        }
-
-        .centerClass {
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         #renderButtonContainer {
@@ -238,9 +235,13 @@
             border-radius: 6px;
         }
 
+        /* END OF VERTICAL NAV BAR */
+        /* START OF MAIN BODY / GRAPH SECTION  */
+
         div#graphContainer {
-            height: 92.5vh;
-            width: calc(100% - 265px);
+            border: 1px solid red;
+            height: 94vh;
+            width: calc(100% - 260px);
             margin-top: 5px;
             margin-left: 5px;
             float: left;
@@ -274,6 +275,8 @@
                 transform: rotate(360deg);
             }
         }
+
+        /* END OF MAIN BODY / GRAPH SECTION */
     </style>
 
     <script src="https://d3js.org/d3.v5.min.js" type="application/javascript"></script>
@@ -288,6 +291,18 @@
         var currentLayout
         var rawDatasetSize
 
+        // window.onresize = function () {
+        //     var ww = window.innerWidth
+        //     var wh = window.innerHeight
+
+        //     graph
+        //     .graphviz()
+        //     .width(ww - 255)
+        //     .height(wh * 0.94)
+
+        //     rerenderGraph()
+        // }
+
         // prevents empty graph window during develepment, might not be needed later
         window.onload = function () {
             currentGraphData = 0;
@@ -295,15 +310,6 @@
             layoutOptionBox = document.getElementById("graphLayoutOpt");
             currentLayout = layoutOptionBox.options[layoutOptionBox.selectedIndex].value;
             initiateGraph(currentLayout)
-        }
-
-        // Function to test looks and functionality of loader. dev purpose only
-        function toggleLoader() {
-            if (document.getElementById("loader").style.display == "none") {
-                document.getElementById("loader").style.display = "block";
-            } else {
-                document.getElementById("loader").style.display = "none";
-            }
         }
 
         // Toggles the tutorial to be shown. is also called by the close button in tutorial.
@@ -435,7 +441,9 @@
             return values;
         }
 
-        // Takes file input file and puts out plain text to console.
+        // Main function. Grabs settings values, lets user upload csv file, sends it to server and displays graph.
+        // Also checks if custom values have been added and adds them to settings Object
+        // TODO use the values form submit submits instead of grabbing them of the inputs "after" submit. hacky.
         function onFormSubmit(e) {
             var reader = new FileReader();
             var fileInput = document.getElementById('fileChooserButton').files[0];
@@ -506,20 +514,44 @@
         // iterates .dot data and sorts students into color-classes {color: [student name, ...]}
         // classes are defined by color inside the .dot file
         function sortTeams2() {
-            var classes = {};
-            var dataInRows = currentGraphData.dot.split("\n", rawDatasetSize);
-            let nameRegex = /label="(.+?)"/s;
-            let colorRegex = /color=(.+?),/s;
-            for (let row of dataInRows) {
-                if (row.match(colorRegex) == null) continue
-                var rowColor = row.match(colorRegex)[1]
-                if (rowColor in classes) {
-                    classes[rowColor].push(row.match(nameRegex)[1]);
+            if (currentGraphData.dot != null) {
+                var classes = {};
+                var dataInRows = currentGraphData.dot.split("\n", rawDatasetSize);
+                let nameRegex = /label="(.+?)\\/s;
+                let colorRegex = /color=(.+?),/s;
+                for (let row of dataInRows) {
+                    if (row.match(colorRegex) == null) continue
+                    var rowColor = row.match(colorRegex)[1]
+                    if (rowColor in classes) {
+                        classes[rowColor].push(row.match(nameRegex)[1]);
+                    } else {
+                        classes[rowColor] = [row.match(nameRegex)[1]];
+                    }
+                }
+                return classes;
+            } else {
+                alert("No data available. Render graph first.")
+            }
+        }
+
+        // Toggles the export data to be shown.
+        function toggleExportWindow() {
+            var shownExportData = sortTeams2();
+            var textContainer = [];
+            var exportDataContainer = document.getElementById("exportDataContainer")
+            var exportDataText = document.getElementById("exportDataText")
+
+            if (shownExportData != null) {
+                if (exportDataContainer.style.display == "none") {
+                    exportDataContainer.style.display = "block";
+                    for (const [key, value] of Object.entries(shownExportData)) {
+                        textContainer.push("<p><h3>Class "+key+" ("+value.length+")</h3></p>", value, "<br>")
+                    }
+                    exportDataText.innerHTML = textContainer
                 } else {
-                    classes[rowColor] = [row.match(nameRegex)[1]];
+                    exportDataContainer.style.display = "none";
                 }
             }
-            return classes;
         }
 
         // watches layout select and rerenders graph everytime layout changes
@@ -545,8 +577,8 @@
             graph
                 .graphviz()
                 .width(ww - 255)
-                .height(wh * 0.92)
-                .fit(false)
+                .height(wh * 0.94)
+                .fit(true)
                 .growEnteringEdges(true)
                 .logEvents(true)
                 .on("start", function () {
@@ -558,6 +590,10 @@
                     console.log("graphviz layoutStart triggered")
                 })
                 .on("renderEnd", function () {
+                    document.getElementById("loader").style.display = "none"
+                    console.log("graphviz end triggered")
+                })
+                .on("initEnd", function () {
                     document.getElementById("loader").style.display = "none"
                     console.log("graphviz end triggered")
                 })
@@ -582,12 +618,7 @@
 <body>
 
     <div class="nav-horizontal">
-        <ul id="navHorizontalUl" class="right">
-            <!-- TODO cleanup Classes -->
-            <!-- <li>
-		<button onclick="toggleLoader()">
-			toggle loader
-		</button>-->
+        <ul class="horizontalUnsortedListContainer">
 
             <li><label class="settingTitle">Cost:</label></li>
             <li><label id="costStatLabel"></label></li>
@@ -613,12 +644,13 @@
                 </button>
             </li>
             <li>
-                <button class="horizontalButton id=" exportButton" onclick="sortTeams2()">
+                <button class="horizontalButton" id="exportButton" onclick="toggleExportWindow()">
                     Export
                 </button>
             </li>
             <li>
-                <a href="https://github.com/psaniko/student-assigner"><label class="horizontalButton">GitHub</label></a>
+                <a href="https://github.com/psaniko/student-assigner" target="_blank"><label
+                        class="horizontalButton">GitHub</label></a>
             </li>
         </ul>
     </div>
@@ -680,10 +712,20 @@
             <div id="graphDiv"></div>
         </div>
 
+        <div class="tutorialContainer" id="exportDataContainer" style="display: none;">
+            <button class="closeTutorialButton" onclick="toggleExportWindow()">Close</button>
+
+            <div class="tutorialText" id="exportDataText">
+            </div>
+        </div>
+
         <div class="tutorialContainer" id="tutorialContainer" style="display: none;">
             <div class="tutorialText">
-                <button id="closeTutorialButton" onclick="toggleTutorial()">Close</button>
+                <button class="closeTutorialButton" onclick="toggleTutorial()">Close</button>
                 <h2>Tutorial - Welcome to Student Assigner</h2>
+                <h5>This tool algorithmically divides a pool of students into classes, considering as many of their
+                    preferences as possible while balancing class size and optionally other attributes.
+                </h5>
                 <h5>Note: This tutorial is (supposed to be) pretty detailed. If you're into tech you can most propably
                     skip it.</h5>
 
@@ -694,14 +736,27 @@
                     be:
                     <br>
                     <br>
-                    "Gender" | "Name" | "School" | "Recommendation" | "Recommendation_int" | "Preferences"
+                    "Gender" | "Name" | "School" | "Class " | "Recommendation" | "Recommendation_int" | "Preferences"
+                    <br>
+                    <br>
+                    Valid values in these columns are:
+                    <br>Gender: "m" or "f"
+                    <br>Name (full name): "Emmy Example", "Martin-Mario Maximum"
+                    <br>School (the origin school): "Exampleschool", "Science Super School"
+                    <br>Class (origin): "4a", "2"
+                    <br>Recommendation (the recommendation which school form the studend should append): "HS" or "HS/RS"
+                    or "RS" or "RS/GY" or "GY"
+                    <br>Recommendation_int (the number version of recommendation): "1" (if HS), "2" (if HS/RS), "3" (if
+                    RS), "4" (if RS/GY) or "5" (if GY)
+                    <br>Preferences (for people, for origin class, for origin school. a "!" marks negative wishes):
+                    "Ricardo Research" or "!Ricardo Research", "Exampleschool", "!4a"
                     <br>
                     <br>
                     Your data can contain "ä,ü,ö".
                     <p>
                         References and wishes should be clear (e.g. Lisas wish for "Max" should be changed to his full
                         name, as there could be multiple Maxs in the data).
-
+                        <br>
                         You are going to need a .csv file. This is a common spreadsheet filetype and can be exported by
                         most programs like Excel, Numbers, Google Sheets etc.
                         Select "Save As" or "Export As" in your spreadsheet file, then select ".csv".
@@ -716,40 +771,48 @@
                     The setting labels indicate the following:
                     <p>
                         - Classes
-                        -> The number of partitions you want your data to be distributed into.
+                        -> The number of classes you want your students to be distributed into.
                     </p>
                     <p>
-                        - Edge weights
-                        -> The amount of "weight" you want a certain kind of connection (edge) to have. Higher is
-                        heavier/more important.
+                        - Preference weights
+                        -> The amount of "weight" you want a certain kind of preference/wish to have. Higher is
+                        heavier/more important and has therefore more impact as a factor of distribution.
                         You usually want the weight of the teacher Multiplier to be much higher than the wishes of your
                         well-known troublemaker-crew.
-                        "Class" and "School" weight declares the weight of the same origin school as a factor to
-                        distribution.
-                        <!-- TODO -->
                     </p>
                     <p>
-                        - Node weight imbalance tolerance %
-                        -> Sounds complicated, right? Well - it is. In order to build the amount of partitions you need
-                        the tool needs to make a few cuts.
-                        The node weight imbalance tolerance % indicates how much imbalance you are willing to allow the
+                        - Max difference in %
+                        -> Sounds complicated, right? Well - it kinda is. In order to build the amount of partitions you
+                        want
+                        the tool might needs to make a few cuts. Not all wishes can be fulfilled.
+                        The Max difference in % indicates how much imbalance you are willing to allow the
                         tool to complete its calculations.
+                        The tool will try to make equal class sizes.The tool will try to have equal male and female
+                        students in each class. The % you set here is the maximum difference to equal distributions.
                         Please note: if this tolerance isn't high enough it might get mathematically impossible to build
                         your distribution.
                     </p>
-
-                    <p>
-                        You need to set a value for "Partitions" to proceed, as the remainig setting values are
-                        prefilled for you.
-                        Feel free to change them, tho.
+                    <p>- Add custom
+                        -> by clicking this button you may add up to 5 custom "Max difference in %" and see them
+                        calculated into your results.
+                        Given the data of the "Format your data"-part this could be "recommendation_int" as column name
+                        and "30%" as maximum difference in %
+                        You may add other columnnames, given they can be found in your data.
                     </p>
                 </p>
 
-                <h4>4) Render your graph</h4>
+                <h4>4) Render graph and find your results</h4>
                 <p>
                     Click "Render Graph" on the lower left of the website.
                     After a short loading time, indicated by a fancy spinner in the middle of your screen, your graph
                     will appear.
+                </p>
+                <p>
+                    The graphical distribution you can see now is the resulting distribution according to your settings.
+                    Classes are colored. So everybody within a blue border has been distributed into the same class.
+                    You can see the connections (preferences) between students if you zoom in.
+                    There are more connections then you see, but we don't render the ones below a weight of "30" to save
+                    yourself time and prevent lags.
                 </p>
 
                 <h4>5) Fiddle with your graph</h4>
@@ -765,11 +828,17 @@
                     You can move the graph around by left click and holding.
                 </p>
 
-                <h5>Anything wrong? Send us a message and we'll see if we can sort it out. Find our contact data on the
-                    upper right</h5>
+                <h4>6) Export your data as text</h4>
+                <p>
+                    By clicking the "Export" button on the upper right of the page you will be shown your class
+                    distribution sorted by class color in plain text.
+                </p>
+
+                <h4>Anything wrong? Send us a message and we'll see if we can sort it out. Find our contact data and the
+                    <a href="https://github.com/psaniko/student-assigner target=" _blank"">GitHub</a> repository for this project on the upper right.</h4>
+                <h5>This project is licensed under the GNU General Public License v3.0 - see our <a href="https://github./psaniko/student-assigner" target="_blank">GitHub</a> for details</h5>
             </div>
         </div>
-
 </body>
 
 </html>
