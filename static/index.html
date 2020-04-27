@@ -498,8 +498,8 @@
             if (currentGraphData.dot != null) {
                 var classes = {};
                 var dataInRows = currentGraphData.dot.split("\n", rawDatasetSize);
-                let nameRegex = /label="(.+?)\\/s;
-                let colorRegex = /color=(.+?),/s;
+                let nameRegex = /label="(.+?)\\/;
+                let colorRegex = /color=(.+?),/;
                 for (let row of dataInRows) {
                     if (row.match(colorRegex) == null) continue
                     var rowColor = row.match(colorRegex)[1]
@@ -592,7 +592,7 @@
                 alert("Error: No graph data available.")
             }
         }
-        console.log("reached final scripttag. Thats good!")
+        console.log("reached final scripttag. Thats good!");
     </script>
 </head>
 
