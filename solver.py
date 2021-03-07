@@ -92,7 +92,7 @@ def build_graph(
 
             # parse teacher symbol
             if item.startswith('*'):
-                multiplier = multiplier * 100
+                multiplier = multiplier * teacher_multiplier
                 item = item[1:]
 
             # parse filter
