@@ -516,11 +516,17 @@
                     if (row.match(colorRegex) == null) {
                         continue;
                     }
-                    var rowColor = row.match(colorRegex)[1]
+                    var rowColor = row.match(colorRegex)[1];
+
+                    // get name
+                    var nameMatch = row.match(nameRegex);
+                    if (!nameMatch) {
+                        break;
+                    }
                     if (rowColor in classes) {
-                        classes[rowColor].push(row.match(nameRegex)[1]);
+                        classes[rowColor].push(nameMatch[1]);
                     } else {
-                        classes[rowColor] = [row.match(nameRegex)[1]];
+                        classes[rowColor] = [nameMatch[1]];
                     }
                 }
                 return classes;
