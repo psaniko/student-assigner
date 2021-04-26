@@ -268,7 +268,6 @@
                 transform: rotate(360deg);
             }
         }
-
         /* END OF MAIN BODY / GRAPH SECTION */
     </style>
 
@@ -284,7 +283,7 @@
         var currentLayout
         var rawDatasetSize
 
-        // prevents empty graph window during develepment, might not be needed later
+        // prevents empty graph window during development, might not be needed later
         window.onload = function () {
             currentGraphData = 0;
             graph = d3.select("#graphDiv");
@@ -427,7 +426,7 @@
         // TODO use the values form submit submits instead of grabbing them of the inputs "after" submit. hacky.
         function onFormSubmit(e) {
             var reader = new FileReader();
-            var fileInput = document.getElementById('fileChooserButton').files[0];
+            var fileInput = document.getElementById('fileChooserButton').files[0]; // TODO add .xls and .xlsx functionality
             var layoutOptionBox = document.getElementById("graphLayoutOpt")
             var currentLayout = layoutOptionBox.options[layoutOptionBox.selectedIndex].value
 
@@ -475,14 +474,18 @@
                         body: JSON.stringify(dataToBeSent)
                     })
                         .then(response => response.json())
-                        .then(data => {
-                            console.log("Content of dot is:" + data.dot);
-                            currentGraphData = data;
-                            document.getElementById("loader").style.display = "none";
-                            rerenderGraph(currentLayout, currentGraphData.dot);
-                            setCostStat(currentGraphData);
+                        .then(json_response => {
+                            if (json_response.status != 200) {
+                                alert(json_response.message);
+                            } else {
+                                console.log("Content of dot is:" + json_response.dot);
+                                currentGraphData = json_response;
+                                document.getElementById("loader").style.display = "none";
+                                rerenderGraph(currentLayout, currentGraphData.dot);
+                                setCostStat(currentGraphData);
+                            }
                         })
-                    setdatasetSizeStat(fileInputText);
+                    setdatasetSizeStat(fileInputText); // maybe TODO prevent if response is code 400
                 };
             }
             else alert("No File selected!");
@@ -643,7 +646,7 @@
                 <label class="settingTitle">Upload CSV file</label>
                 <br>
                 <div id="fileChooserButtonContainer">
-                    <input id="fileChooserButton" type="file" accept=".csv" required>
+                    <input id="fileChooserButton" type="file" accept=".csv" required> <!--TODO add .xls and .xlsx-->
                 </div>
             </div>
             <div class="settingItem settingTextItem">
