@@ -37,6 +37,10 @@ def build_graph(
     # add students as nodes
     for row in students:
         name = row['Name']
+
+        if not name:
+            continue
+
         origin_class = row['School'] + ' ' + row['Class']
         origin_school = row['School']
         gender = row.get('Gender')
