@@ -269,7 +269,9 @@
             }
         }
         /* END OF MAIN BODY / GRAPH SECTION */
+        
     </style>
+    <link rel="stylesheet" href="styles.css">
 
     <script src="https://d3js.org/d3.v5.min.js" type="application/javascript"></script>
     <script src="https://unpkg.com/@hpcc-js/wasm@0.3.11/dist/index.min.js" type="application/javascript"></script>
@@ -478,7 +480,7 @@
                             if (json_response.status != 200) {
                                 alert(json_response.message);
                             } else {
-                                console.log("Content of dot is:" + json_response.dot);
+                                console.log("Content of dot is:" + json_response.data.dot);
                                 currentGraphData = json_response;
                                 document.getElementById("loader").style.display = "none";
                                 rerenderGraph(currentLayout, currentGraphData.dot);
