@@ -310,6 +310,7 @@
             document.getElementById("costStatLabel").innerHTML = dataset.cost;
         }
 
+        // TODO this is wrong. Counting needs to be fixed, counts emtpry rows. switch to values in response
         // basically counts the rows of the .csv dataset and puts them into a label
         function setdatasetSizeStat(datasetStr) {
             rawDatasetSize = datasetStr.split(/\r\n|\r|\n/).length;
