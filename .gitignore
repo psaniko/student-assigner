@@ -7,6 +7,5 @@ node_modules/
 package.json
 package-lock.json
 tutorial.txt
-
-# VS Code specific files
+.python-version
 /.vscode

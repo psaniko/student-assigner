@@ -481,7 +481,7 @@
                                 alert(json_response.message);
                             } else {
                                 console.log("Content of dot is:" + json_response.data.dot);
-                                currentGraphData = json_response;
+                                currentGraphData = json_response.data;
                                 document.getElementById("loader").style.display = "none";
                                 rerenderGraph(currentLayout, currentGraphData.dot);
                                 setCostStat(currentGraphData);
@@ -506,7 +506,12 @@
                 let nameRegex = /label="(.+?)\\/;
                 let colorRegex = /color=(.+?),/;
                 for (let row of dataInRows) {
-                    if (row.match(colorRegex) == null) continue
+                    if (row === null) {
+                        continue;
+                    }
+                    if (row.match(colorRegex) == null) {
+                        continue;
+                    }
                     var rowColor = row.match(colorRegex)[1]
                     if (rowColor in classes) {
                         classes[rowColor].push(row.match(nameRegex)[1]);
