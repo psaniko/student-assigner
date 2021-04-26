@@ -505,8 +505,8 @@
         function sortTeams2() {
             if (currentGraphData.dot != null) {
                 var classes = {};
-                var dataInRows = currentGraphData.dot.split("\n", rawDatasetSize);
-                let nameRegex = /label="(.+?)\\/;
+                var dataInRows = currentGraphData.dot.split(";");
+                let nameRegex = /label="(.+?)\\/; //ends matching on first backslash! -> on \n
                 let colorRegex = /color=(.+?),/;
                 for (let row of dataInRows) {
                     if (row === null) {
