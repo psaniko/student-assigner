@@ -44,8 +44,11 @@ def create_dot_file():
         return json_error(400, str(e))
 
     return jsonify({
-        'cost': cost,
-        'dot': G.to_string(),
+        'status': 200,
+        'data': {
+            'cost': cost,
+            'dot': G.to_string(),
+        }
     })
 
 
