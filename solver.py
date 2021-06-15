@@ -152,6 +152,8 @@ def build_graph(
             ],
             'ubvec': list(node_weights_to_ubvec.values()),
             'objtype': 'cut',
+            # 'ctype': 'shem',
+            'seed': 111,
         })
         (total_volume, parts) = promise.get(timeout=3)
     except TimeoutError as e:
